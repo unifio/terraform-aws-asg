@@ -12,18 +12,20 @@ Prerequisites
 Requirements
 ----------------------
 
-- Terraform 0.6.0 or newer
+- Terraform 0.6.4 or newer
 - AWS provider
 
 Module Inputs
 ----------------------
 
-- `app_label` - Tag used in resource naming (i.e. ops).
-- `app_name` - Additional tag used in resource naming.
+- `stack_item_label` - Tag used in resource naming (i.e. ops).
+- `stack_item_fullname` - Additional tag used in resource naming.
+- `region` - EC2 region to be utilized.
 - `vpc_id` - ID of the target VPC.
 - `subnets` - List of available VPC subnets.
 - `ami` - Pre-baked AMI.
 - `instance_type` - EC2 instance type to be utilized.
+- `instance_profile` - EC2 instance profile to be utilized.
 - `key_name` - SSH key pair to be deployed to instances.
 - `enable_monitoring` - Flag to enable detailed monitoring. Defaults to 'true'.
 - `ebs_optimized` - Flag to enable EBS optimization. Defaults to 'true'.
@@ -40,7 +42,7 @@ Module Inputs
 Usage
 -----
 
-Template 
+Template
 
 To use this template, you need to do the following:
 
@@ -49,24 +51,33 @@ To use this template, you need to do the following:
 ```
 provider "aws" {
         region = "us-east-1"
+		secret_key = "<secret_key>"
+		access_key = "<access_key>"
 }
 
 module "autoscaling" {
-        source = "github.com/unfio/terraform-aws-autoscaling"
+        source = "github.com/unifio/terraform-aws-autoscaling"
 
-        app_label = "ops"
-        app_name = "application"
+# the following variables are required AWS objects that should exists in the
+# aws account prior to execution of this infrastructure
         vpc_id = "vpc-0a74db6f"
         subnets = "subnet-8c3ebefb,subnet-965bfecf,subnet-0db42f68"
-        ami = "ami-bb1a7ccc"
+        load_balancers = "application-elb"
+        instance_profile = "terraform"
+        key_name = "ops"
+## the following variables are to be populated at the discretion of the user
+        domain = "unif.io"
+        stack_item_label = "ops"
+        stack_item_fullname = "application"
+## if the Autoscaling group is configured for EBS optimization then
+## individually EBS optimized instances will fail to launch.  		
+        ebs_optimized = "false"
+        ami = "ami-5b7b726b"
         instance_type = "t2.medium"
         max_size = "6"
         min_size = "2"
         hc_grace_period = "300"
         hc_check_type = "ELB"
-        load_balancers = "application-elb"
-        key_name = "ops"
-        domain = "unif.io"
         ssh_user = "centos"
 }
 ```

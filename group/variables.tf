@@ -1,10 +1,14 @@
 # Input Variables
 
 ## Resource tags
-variable "app_label" {}
-variable "app_name" {}
+variable "stack_item_label" {}
+variable "stack_item_fullname" {}
 
 ## VPC parameters
+variable "region" {
+	default = "us-east-1" 
+}
+
 variable "vpc_id" {}
 variable "subnets" {}
 

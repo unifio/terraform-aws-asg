@@ -2,12 +2,12 @@
 
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
-        name = "sg-${var.app_label}-${var.app_name}"
-        description = "${var.app_name} security group"
+        name = "sg${var.stack_item_label}${var.stack_item_fullname}"
+        description = "${var.stack_item_fullname} security group"
         vpc_id = "${var.vpc_id}"
         tags {
-                application = "${var.app_name}"
-                Name = "${var.app_label}-${var.app_name}"
+                application = "${var.stack_item_fullname}"
+                Name = "${var.stack_item_label}-${var.stack_item_fullname}"
         }
 
         egress {
@@ -20,7 +20,7 @@ resource "aws_security_group" "sg_asg" {
 
 ## Creates launch configuration
 resource "aws_launch_configuration" "lc" {
-        name = "lc-${var.app_label}-${var.app_name}"
+        name = "lc-${var.stack_item_label}-${var.stack_item_fullname}"
         image_id = "${var.ami}"
         instance_type = "${var.instance_type}"
         iam_instance_profile = "${var.instance_profile}"
@@ -34,7 +34,7 @@ resource "aws_launch_configuration" "lc" {
 
 ## Creates autoscaling group
 resource "aws_autoscaling_group" "asg" {
-        name = "asg-${var.app_label}-${var.app_name}"
+        name = "asg-${var.stack_item_label}-${var.stack_item_fullname}"
         max_size = "${var.max_size}"
         min_size = "${var.min_size}"
         launch_configuration = "${aws_launch_configuration.lc.id}"
@@ -45,12 +45,12 @@ resource "aws_autoscaling_group" "asg" {
         vpc_zone_identifier = ["${split(",",var.subnets)}"]
         tag {
                 key = "application"
-                value = "${var.app_name}"
+                value = "${var.stack_item_fullname}"
                 propagate_at_launch = true
         }
         tag {
                 key = "Name"
-                value = "${var.app_label}-${var.app_name}"
+                value = "${var.stack_item_label}-${var.stack_item_fullname}"
                 propagate_at_launch = true
         }
 }
@@ -60,8 +60,9 @@ resource "aws_autoscaling_group" "asg" {
 resource "template_file" "user_data" {
         filename = "${path.root}/templates/${var.user_data_template}"
         vars {
-                hostname = "${var.app_label}-${var.app_name}"
+                hostname = "${var.stack_item_label}-${var.stack_item_fullname}"
                 domain = "${var.domain}"
+                region = "${var.region}"
                 ssh_user = "${var.ssh_user}"
         }
 }
