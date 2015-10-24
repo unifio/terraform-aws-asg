@@ -1,21 +1,21 @@
 require 'rake'
 
 inputs = {
-  'domain'              => 'unif.io',
-  'stack_item_label'    => 'terraform',
+  'stack_item_label'    => 'tst',
   'stack_item_fullname' => 'example',
-  'ssh_user'            => 'ec2-user',
-  'key_name'            => 'example',
+  'organization'        => 'unifio',
+  'vpc_stack_name'      => 'test-vpc',
+  'region'              => 'us-west-2',
   'ami'                 => 'ami-xxxxxx',
-  'vpc_id'              => 'vpc-1a2b3c4d',
-  'min_size'            => '2',
-  'max_size'            => '5',
   'instance_type'       => 't2.small',
   'instance_profile'    => 'terraform',
-  'hc_check_type'       => 'ELB',
-  'hc_grace_period'     => '300',
-  'subnets'             => 'us-east-1a,us-west-1a',
-  'load_balancers'      => 'application-elb',
+  'key_name'            => 'example',
+  'cluster_min_size'    => '4',
+  'cluster_max_size'    => '4',
+  'min_elb_capacity'    => '2',
+  'internal'            => 'true',
+  'cross_zone_lb'       => 'true',
+  'connection_draining' => 'true'
 }
 
 task :default => :verify
@@ -28,7 +28,7 @@ task :verify do
     vars.push("-var #{var}=\"#{value}\"")
   end
 
-  ['basic'].each do |stack|
+  ['basic','standard'].each do |stack|
     task_args = {:stack => stack, :args => vars.join(' ')}
     Rake::Task['clean'].execute(Rake::TaskArguments.new(task_args.keys, task_args.values))
     Rake::Task['plan'].execute(Rake::TaskArguments.new(task_args.keys, task_args.values))
