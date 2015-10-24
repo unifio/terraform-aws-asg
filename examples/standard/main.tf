@@ -1,4 +1,4 @@
-# Basic ASG Example
+# Standard ASG Example
 
 ## Configures providers
 provider "aws" {
@@ -58,13 +58,75 @@ resource "aws_iam_role_policy" "logs" {
 EOF
 }
 
+## Creates ELB security group
+resource "aws_security_group" "sg_elb" {
+  name = "sg-${var.stack_item_label}-example"
+  description = "Standard ASG example ELB"
+  vpc_id = "${terraform_remote_state.vpc.output.vpc_id}"
+
+  tags {
+    Name = "${var.stack_item_label}-example-elb"
+    application = "${var.stack_item_fullname}"
+    managed_by = "terraform"
+  }
+
+  # Allow HTTP traffic
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+  }
+
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+  }
+}
+
+## Creates ELB
+resource "aws_elb" "elb" {
+  security_groups = ["${aws_security_group.sg_elb.id}"]
+  subnets = ["${split(",",terraform_remote_state.vpc.output.lan_subnet_ids)}"]
+  internal = "${var.internal}"
+  cross_zone_load_balancing = "${var.cross_zone_lb}"
+  connection_draining = "${var.connection_draining}"
+
+  tags {
+    Name = "${var.stack_item_label}-example"
+    application = "${var.stack_item_fullname}"
+    managed_by = "terraform"
+  }
+
+  listener {
+    instance_port = 8080
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http"
+  }
+
+  health_check {
+    healthy_threshold = 5
+    unhealthy_threshold = 4
+    timeout = 5
+    target = "TCP:8080"
+    interval = 30
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 ## Adds security group rules
-resource "aws_security_group_rule" "ssh" {
+resource "aws_security_group_rule" "elb" {
   type = "ingress"
   from_port = 22
   to_port = 22
   protocol = "tcp"
-  cidr_blocks = ["${terraform_remote_state.vpc.output.lan_access_cidr}"]
+  source_security_group_id = "${aws_security_group.sg_elb.id}"
   security_group_id = "${module.example.sg_id}"
 }
 
@@ -81,7 +143,7 @@ resource "template_file" "user_data" {
 
 ## Provisions basic autoscaling group
 module "example" {
-  source = "../../group/basic"
+  source = "../../group/standard"
 
   # Resource tags
   stack_item_label = "${var.stack_item_label}"
@@ -102,4 +164,6 @@ module "example" {
   # ASG parameters
   max_size = "${var.cluster_max_size}"
   min_size = "${var.cluster_min_size}"
+  min_elb_capacity = "${var.min_elb_capacity}"
+  load_balancers = "${aws_elb.elb.id}"
 }
