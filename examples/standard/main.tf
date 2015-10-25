@@ -167,3 +167,52 @@ module "example" {
   min_elb_capacity = "${var.min_elb_capacity}"
   load_balancers = "${aws_elb.elb.id}"
 }
+
+## Provisions autoscaling policies and associated resources
+module "scale_up_policy" {
+  source = "../../policy/percentage"
+
+  # Resource tags
+  stack_item_label = "${var.stack_item_label}-up"
+  stack_item_fullname = "${var.stack_item_fullname}"
+
+  # ASG parameters
+  asg_name = "${module.example.asg_name}"
+
+  # Notification parameters
+  notifications = "autoscaling:EC2_INSTANCE_LAUNCH_ERROR,autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+
+  # Monitor parameters
+  scaling_adjustment = 30
+  cooldown = 300
+  min_adjustment_step = 2
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = 2
+  metric_name = "CPUUtilization"
+  period = 120
+  threshold = 10
+}
+
+module "scale_down_policy" {
+  source = "../../policy/absolute"
+
+  # Resource tags
+  stack_item_label = "${var.stack_item_label}-down"
+  stack_item_fullname = "${var.stack_item_fullname}"
+
+  # ASG parameters
+  asg_name = "${module.example.asg_name}"
+
+  # Notification parameters
+  notifications = "autoscaling:EC2_INSTANCE_LAUNCH_ERROR,autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+
+  # Monitor parameters
+  adjustment_type = "ChangeInCapacity"
+  scaling_adjustment = 2
+  cooldown = 300
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods = 2
+  metric_name = "CPUUtilization"
+  period = 120
+  threshold = 10
+}
