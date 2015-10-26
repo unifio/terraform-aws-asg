@@ -1,4 +1,5 @@
 # Terraform AWS Auto Scaling Module #
+[![Circle CI](https://circleci.com/gh/unifio/terraform-aws-asg/tree/master.svg?style=svg)](https://circleci.com/gh/unifio/terraform-aws-asg/tree/master)
 
 Module stack supporting multiple deployment scenarios of an Auto Scaling Group to an AWS VPC.
 

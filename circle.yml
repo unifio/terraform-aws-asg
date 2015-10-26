@@ -1,6 +1,6 @@
 machine:
   environment:
-    TF_VERSION: 0.6.5
+    TF_VERSION: 0.6.6
     TF_URL: https://dl.bintray.com/mitchellh/terraform/terraform_${TF_VERSION}_linux_amd64.zip
 dependencies:
   pre:
