@@ -2,7 +2,7 @@
 
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
-  name = "sg-${var.stack_item_label}-asg"
+  name = "${var.stack_item_label}-asg"
   description = "${var.stack_item_fullname} security group"
   vpc_id = "${var.vpc_id}"
 
