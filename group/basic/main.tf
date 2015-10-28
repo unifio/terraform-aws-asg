@@ -22,7 +22,6 @@ resource "aws_security_group" "sg_asg" {
 
 ## Creates launch configuration
 resource "aws_launch_configuration" "lc" {
-  name = "lc-${var.stack_item_label}"
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
   iam_instance_profile = "${var.instance_profile}"
@@ -31,6 +30,10 @@ resource "aws_launch_configuration" "lc" {
   enable_monitoring = "${var.enable_monitoring}"
   ebs_optimized = "${var.ebs_optimized}"
   user_data = "${var.user_data}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 ## Creates autoscaling group
@@ -48,5 +51,9 @@ resource "aws_autoscaling_group" "asg" {
     key = "application"
     value = "${var.stack_item_fullname}"
     propagate_at_launch = true
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
