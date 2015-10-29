@@ -218,4 +218,4 @@ See the [examples](examples) directory for a complete set of example source file
 
 ## License ##
 
-Apache 2 Licensed. See LICENSE for full details.
+MPL 2.0. See LICENSE for full details.
