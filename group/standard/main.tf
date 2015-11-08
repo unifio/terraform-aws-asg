@@ -58,5 +58,9 @@ resource "aws_autoscaling_group" "asg" {
     propagate_at_launch = true
   }
 
+  tag {
+    key = "Name"
+    value = "${var.stack_item_label}"
+    propagate_at_launch = true
   }
 }
