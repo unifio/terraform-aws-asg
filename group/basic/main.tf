@@ -56,7 +56,5 @@ resource "aws_autoscaling_group" "asg" {
     propagate_at_launch = true
   }
 
-  lifecycle {
-    create_before_destroy = true
   }
 }
