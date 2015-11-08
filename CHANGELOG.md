@@ -1,6 +1,7 @@
 ## Unreleased
 
 #### IMPROVEMENTS:
+* Added ASG name to module outputs [GH-8]
 * Added default Name tag to auto scaling groups [GH-6]
 
 #### BUG FIXES:
