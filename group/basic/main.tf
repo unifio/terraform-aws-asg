@@ -2,7 +2,6 @@
 
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
-  name = "${var.stack_item_label}-asg"
   description = "${var.stack_item_fullname} security group"
   vpc_id = "${var.vpc_id}"
 
@@ -17,6 +16,10 @@ resource "aws_security_group" "sg_asg" {
     from_port = 0
     to_port = 0
     protocol = "-1"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -53,7 +56,9 @@ resource "aws_autoscaling_group" "asg" {
     propagate_at_launch = true
   }
 
-  lifecycle {
-    create_before_destroy = true
+  tag {
+    key = "Name"
+    value = "${var.stack_item_label}"
+    propagate_at_launch = true
   }
 }

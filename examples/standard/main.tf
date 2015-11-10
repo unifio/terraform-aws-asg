@@ -9,8 +9,13 @@ provider "atlas" {}
 ## Sources inputs from VPC remote state
 resource "terraform_remote_state" "vpc" {
   backend = "atlas"
+
   config {
     name = "${var.organization}/${var.vpc_stack_name}"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -18,6 +23,11 @@ resource "terraform_remote_state" "vpc" {
 resource "aws_iam_role" "role" {
   name = "${var.stack_item_label}-${var.region}-example"
   path = "/"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -37,11 +47,20 @@ EOF
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "${var.stack_item_label}-${var.region}-example"
   roles = ["${aws_iam_role.role.name}"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy" "logs" {
     name = "monitoring"
     role = "${aws_iam_role.role.id}"
+
+    lifecycle {
+      create_before_destroy = true
+    }
+
     policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -68,6 +87,10 @@ resource "aws_security_group" "sg_elb" {
     Name = "${var.stack_item_label}-example-elb"
     application = "${var.stack_item_fullname}"
     managed_by = "terraform"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   # Allow HTTP traffic
@@ -128,6 +151,10 @@ resource "aws_security_group_rule" "elb" {
   protocol = "tcp"
   source_security_group_id = "${aws_security_group.sg_elb.id}"
   security_group_id = "${module.example.sg_id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 ## Generates instance user data from a template
@@ -138,6 +165,10 @@ resource "template_file" "user_data" {
     hostname = "${var.stack_item_label}-example"
     domain = "example.org"
     region = "${var.region}"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
