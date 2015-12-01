@@ -1,6 +1,7 @@
-## Unreleased
+## 0.1.1 (Dec 1, 2015)
 
 #### IMPROVEMENTS:
+* Updated template_file usage for 0.6.7 to remove deprecation warnings [GH-9]
 * Added ASG name to module outputs [GH-8]
 * Added default Name tag to auto scaling groups [GH-6]
 
