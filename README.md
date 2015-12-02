@@ -9,7 +9,7 @@ Module stack supporting multiple deployment scenarios of an Auto Scaling Group t
 
 ## Requirements ##
 
-- Terraform 0.6.4 or newer
+- Terraform 0.6.7 or newer
 - AWS provider
 
 ## Basic Group Module ##

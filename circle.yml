@@ -1,7 +1,7 @@
 machine:
   environment:
-    TF_VERSION: 0.6.6
-    TF_URL: https://dl.bintray.com/mitchellh/terraform/terraform_${TF_VERSION}_linux_amd64.zip
+    TF_VERSION: 0.6.7
+    TF_URL: https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
 dependencies:
   pre:
     - "[[ -f \"${HOME}/bin/terraform\" ]] || (wget -O \"/tmp/tf.zip\" \"${TF_URL}\" && unzip -o -d \"${HOME}/bin\" \"/tmp/tf.zip\")"

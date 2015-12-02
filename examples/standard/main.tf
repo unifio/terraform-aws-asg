@@ -159,7 +159,7 @@ resource "aws_security_group_rule" "elb" {
 
 ## Generates instance user data from a template
 resource "template_file" "user_data" {
-  filename = "../templates/user_data.tpl"
+  template = "${file("../templates/user_data.tpl")}"
 
   vars {
     hostname = "${var.stack_item_label}-example"
