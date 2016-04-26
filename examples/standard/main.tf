@@ -4,7 +4,9 @@
 provider "aws" {
   region = "${var.region}"
 }
-provider "atlas" {}
+
+provider "atlas" {
+}
 
 ## Sources inputs from VPC remote state
 resource "terraform_remote_state" "vpc" {
@@ -45,7 +47,7 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name = "${var.stack_item_label}-${var.region}-example"
+  name  = "${var.stack_item_label}-${var.region}-example"
   roles = ["${aws_iam_role.role.name}"]
 
   lifecycle {
@@ -54,14 +56,14 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy" "logs" {
-    name = "monitoring"
-    role = "${aws_iam_role.role.id}"
+  name = "monitoring"
+  role = "${aws_iam_role.role.id}"
 
-    lifecycle {
-      create_before_destroy = true
-    }
+  lifecycle {
+    create_before_destroy = true
+  }
 
-    policy = <<EOF
+  policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -79,14 +81,14 @@ EOF
 
 ## Creates ELB security group
 resource "aws_security_group" "sg_elb" {
-  name = "sg-${var.stack_item_label}-example"
+  name        = "sg-${var.stack_item_label}-example"
   description = "Standard ASG example ELB"
-  vpc_id = "${terraform_remote_state.vpc.output.vpc_id}"
+  vpc_id      = "${terraform_remote_state.vpc.output.vpc_id}"
 
   tags {
-    Name = "${var.stack_item_label}-example-elb"
+    Name        = "${var.stack_item_label}-example-elb"
     application = "${var.stack_item_fullname}"
-    managed_by = "terraform"
+    managed_by  = "terraform"
   }
 
   lifecycle {
@@ -96,46 +98,46 @@ resource "aws_security_group" "sg_elb" {
   # Allow HTTP traffic
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
   }
 
   egress {
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
   }
 }
 
 ## Creates ELB
 resource "aws_elb" "elb" {
-  security_groups = ["${aws_security_group.sg_elb.id}"]
-  subnets = ["${split(",",terraform_remote_state.vpc.output.lan_subnet_ids)}"]
-  internal = "${var.internal}"
+  security_groups           = ["${aws_security_group.sg_elb.id}"]
+  subnets                   = ["${split(",",terraform_remote_state.vpc.output.lan_subnet_ids)}"]
+  internal                  = "${var.internal}"
   cross_zone_load_balancing = "${var.cross_zone_lb}"
-  connection_draining = "${var.connection_draining}"
+  connection_draining       = "${var.connection_draining}"
 
   tags {
-    Name = "${var.stack_item_label}-example"
+    Name        = "${var.stack_item_label}-example"
     application = "${var.stack_item_fullname}"
-    managed_by = "terraform"
+    managed_by  = "terraform"
   }
 
   listener {
-    instance_port = 8080
+    instance_port     = 8080
     instance_protocol = "http"
-    lb_port = 80
-    lb_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
   }
 
   health_check {
-    healthy_threshold = 5
+    healthy_threshold   = 5
     unhealthy_threshold = 4
-    timeout = 5
-    target = "TCP:8080"
-    interval = 30
+    timeout             = 5
+    target              = "TCP:8080"
+    interval            = 30
   }
 
   lifecycle {
@@ -145,12 +147,12 @@ resource "aws_elb" "elb" {
 
 ## Adds security group rules
 resource "aws_security_group_rule" "elb" {
-  type = "ingress"
-  from_port = 22
-  to_port = 22
-  protocol = "tcp"
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
   source_security_group_id = "${aws_security_group.sg_elb.id}"
-  security_group_id = "${module.example.sg_id}"
+  security_group_id        = "${module.example.sg_id}"
 
   lifecycle {
     create_before_destroy = true
@@ -163,8 +165,8 @@ resource "template_file" "user_data" {
 
   vars {
     hostname = "${var.stack_item_label}-example"
-    domain = "example.org"
-    region = "${var.region}"
+    domain   = "example.org"
+    region   = "${var.region}"
   }
 
   lifecycle {
@@ -177,26 +179,26 @@ module "example" {
   source = "github.com/unifio/terraform-aws-asg//group/standard"
 
   # Resource tags
-  stack_item_label = "${var.stack_item_label}"
+  stack_item_label    = "${var.stack_item_label}"
   stack_item_fullname = "${var.stack_item_fullname}"
 
   # VPC parameters
-  vpc_id = "${terraform_remote_state.vpc.output.vpc_id}"
+  vpc_id  = "${terraform_remote_state.vpc.output.vpc_id}"
   subnets = "${terraform_remote_state.vpc.output.lan_subnet_ids}"
-  region = "${var.region}"
+  region  = "${var.region}"
 
   # LC parameters
-  ami = "${var.ami}"
-  instance_type = "${var.instance_type}"
+  ami              = "${var.ami}"
+  instance_type    = "${var.instance_type}"
   instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
-  user_data = "${template_file.user_data.rendered}"
-  key_name = "${var.key_name}"
+  user_data        = "${template_file.user_data.rendered}"
+  key_name         = "${var.key_name}"
 
   # ASG parameters
-  max_size = "${var.cluster_max_size}"
-  min_size = "${var.cluster_min_size}"
+  max_size         = "${var.cluster_max_size}"
+  min_size         = "${var.cluster_min_size}"
   min_elb_capacity = "${var.min_elb_capacity}"
-  load_balancers = "${aws_elb.elb.id}"
+  load_balancers   = "${aws_elb.elb.id}"
 }
 
 ## Provisions autoscaling policies and associated resources
@@ -204,7 +206,7 @@ module "scale_up_policy" {
   source = "github.com/unifio/terraform-aws-asg//policy/percentage"
 
   # Resource tags
-  stack_item_label = "${var.stack_item_label}-up"
+  stack_item_label    = "${var.stack_item_label}-up"
   stack_item_fullname = "${var.stack_item_fullname}"
 
   # ASG parameters
@@ -214,21 +216,21 @@ module "scale_up_policy" {
   notifications = "autoscaling:EC2_INSTANCE_LAUNCH_ERROR,autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
 
   # Monitor parameters
-  scaling_adjustment = 30
-  cooldown = 300
+  scaling_adjustment  = 30
+  cooldown            = 300
   min_adjustment_step = 2
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods = 2
-  metric_name = "CPUUtilization"
-  period = 120
-  threshold = 10
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  period              = 120
+  threshold           = 10
 }
 
 module "scale_down_policy" {
   source = "github.com/unifio/terraform-aws-asg//policy/absolute"
 
   # Resource tags
-  stack_item_label = "${var.stack_item_label}-down"
+  stack_item_label    = "${var.stack_item_label}-down"
   stack_item_fullname = "${var.stack_item_fullname}"
 
   # ASG parameters
@@ -238,12 +240,12 @@ module "scale_down_policy" {
   notifications = "autoscaling:EC2_INSTANCE_LAUNCH_ERROR,autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
 
   # Monitor parameters
-  adjustment_type = "ChangeInCapacity"
-  scaling_adjustment = 2
-  cooldown = 300
+  adjustment_type     = "ChangeInCapacity"
+  scaling_adjustment  = 2
+  cooldown            = 300
   comparison_operator = "LessThanOrEqualToThreshold"
-  evaluation_periods = 2
-  metric_name = "CPUUtilization"
-  period = 120
-  threshold = 10
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  period              = 120
+  threshold           = 10
 }
