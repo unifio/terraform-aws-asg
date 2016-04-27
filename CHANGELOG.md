@@ -1,3 +1,22 @@
+## Unreleased
+
+#### Consider Implementing:
+* Added support for Autoscaling "StepScaling" policy.
+* Expose `metrics_granularity`, `placement_group`?
+* Auto-scaling schedule examples/modules.
+* De-duplicate similarities between basic and standard modules.
+* Consider coding `ebs_optimized` against list of [ebs-optimized instances](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSOptimized.html).
+
+## 0.1.2 (Apr, 27, 2016)
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* Changed the default value for `ebs_optimized` from `true` -> `false`. This setting is more compatible with the majority of instance types.
+
+#### IMPROVEMENTS:
+* Name for `aws_launch_configuration`.
+* Fixed name label for `aws_autoscaling_group`.
+* Fixed name label for auto-scaling group's security group.
+
 ## 0.1.1 (Dec 1, 2015)
 
 #### IMPROVEMENTS:

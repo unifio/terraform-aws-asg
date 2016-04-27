@@ -3,19 +3,19 @@
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
   description = "${var.stack_item_fullname} security group"
-  vpc_id = "${var.vpc_id}"
+  vpc_id      = "${var.vpc_id}"
 
   tags {
-    Name = "${var.stack_item_label}-asg"
+    Name        = "${var.stack_item_label}-asg-sg"
     application = "${var.stack_item_fullname}"
-    managed_by = "terraform"
+    managed_by  = "terraform"
   }
 
   egress {
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
   }
 
   lifecycle {
@@ -25,14 +25,15 @@ resource "aws_security_group" "sg_asg" {
 
 ## Creates launch configuration
 resource "aws_launch_configuration" "lc" {
-  image_id = "${var.ami}"
-  instance_type = "${var.instance_type}"
+  name                 = "${var.stack_item_label}-lc"
+  image_id             = "${var.ami}"
+  instance_type        = "${var.instance_type}"
   iam_instance_profile = "${var.instance_profile}"
-  key_name = "${var.key_name}"
-  security_groups = ["${aws_security_group.sg_asg.id}"]
-  enable_monitoring = "${var.enable_monitoring}"
-  ebs_optimized = "${var.ebs_optimized}"
-  user_data = "${var.user_data}"
+  key_name             = "${var.key_name}"
+  security_groups      = ["${aws_security_group.sg_asg.id}"]
+  enable_monitoring    = "${var.enable_monitoring}"
+  ebs_optimized        = "${var.ebs_optimized}"
+  user_data            = "${var.user_data}"
 
   lifecycle {
     create_before_destroy = true
@@ -41,24 +42,24 @@ resource "aws_launch_configuration" "lc" {
 
 ## Creates autoscaling group
 resource "aws_autoscaling_group" "asg" {
-  name = "asg-${var.stack_item_label}"
-  max_size = "${var.max_size}"
-  min_size = "${var.min_size}"
-  launch_configuration = "${aws_launch_configuration.lc.id}"
+  name                      = "${var.stack_item_label}-asg"
+  max_size                  = "${var.max_size}"
+  min_size                  = "${var.min_size}"
+  launch_configuration      = "${aws_launch_configuration.lc.id}"
   health_check_grace_period = "${var.hc_grace_period}"
-  health_check_type = "${var.hc_check_type}"
-  force_delete = "${var.force_delete}"
-  vpc_zone_identifier = ["${split(",",var.subnets)}"]
+  health_check_type         = "${var.hc_check_type}"
+  force_delete              = "${var.force_delete}"
+  vpc_zone_identifier       = ["${split(",",var.subnets)}"]
 
   tag {
-    key = "application"
-    value = "${var.stack_item_fullname}"
+    key                 = "application"
+    value               = "${var.stack_item_fullname}"
     propagate_at_launch = true
   }
 
   tag {
-    key = "Name"
-    value = "${var.stack_item_label}"
+    key                 = "Name"
+    value               = "${var.stack_item_label}"
     propagate_at_launch = true
   }
 }

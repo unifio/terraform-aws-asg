@@ -1,6 +1,6 @@
 machine:
   environment:
-    TF_VERSION: 0.6.7
+    TF_VERSION: 0.6.15
     TF_URL: https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
 dependencies:
   pre:
@@ -8,4 +8,7 @@ dependencies:
     - terraform version
 test:
   override:
+    # Style check
+    - "[ $(terraform fmt | wc -l) -eq 0 ]"
+    # Verify plan
     - bundle exec rake
