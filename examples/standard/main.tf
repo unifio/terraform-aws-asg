@@ -146,6 +146,19 @@ resource "aws_elb" "elb" {
 }
 
 ## Adds security group rules
+resource "aws_security_group_rule" "egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${module.example.sg_id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_security_group_rule" "elb" {
   type                     = "ingress"
   from_port                = 22
@@ -176,7 +189,9 @@ resource "template_file" "user_data" {
 
 ## Provisions basic autoscaling group
 module "example" {
-  source = "github.com/unifio/terraform-aws-asg//group/standard"
+  # Example GitHub source
+  #source = "github.com/unifio/terraform-aws-asg//group/standard"
+  source = "../../group/standard"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}"
@@ -203,7 +218,9 @@ module "example" {
 
 ## Provisions autoscaling policies and associated resources
 module "scale_up_policy" {
-  source = "github.com/unifio/terraform-aws-asg//policy/percentage"
+  # Example GitHub source
+  #source = "github.com/unifio/terraform-aws-asg//policy/percentage"
+  source = "../../policy/percentage"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}-up"
@@ -216,18 +233,20 @@ module "scale_up_policy" {
   notifications = "autoscaling:EC2_INSTANCE_LAUNCH_ERROR,autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
 
   # Monitor parameters
-  scaling_adjustment  = 30
-  cooldown            = 300
-  min_adjustment_step = 2
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 2
-  metric_name         = "CPUUtilization"
-  period              = 120
-  threshold           = 10
+  scaling_adjustment       = 30
+  cooldown                 = 300
+  min_adjustment_magnitude = 2
+  comparison_operator      = "GreaterThanOrEqualToThreshold"
+  evaluation_periods       = 2
+  metric_name              = "CPUUtilization"
+  period                   = 120
+  threshold                = 10
 }
 
 module "scale_down_policy" {
-  source = "github.com/unifio/terraform-aws-asg//policy/absolute"
+  # Example GitHub source
+  #source = "github.com/unifio/terraform-aws-asg//policy/absolute"
+  source = "../../policy/absolute"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}-down"

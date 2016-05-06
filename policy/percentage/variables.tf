@@ -27,7 +27,7 @@ variable "scaling_adjustment" {
 variable "cooldown" {
 }
 
-variable "min_adjustment_step" {
+variable "min_adjustment_magnitude" {
   default = 1
 }
 
