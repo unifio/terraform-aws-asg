@@ -80,6 +80,19 @@ EOF
 }
 
 ## Adds security group rules
+resource "aws_security_group_rule" "egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${module.example.sg_id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_security_group_rule" "ssh" {
   type              = "ingress"
   from_port         = 22
@@ -110,7 +123,9 @@ resource "template_file" "user_data" {
 
 ## Provisions basic autoscaling group
 module "example" {
-  source = "github.com/unifio/terraform-aws-asg//group/basic"
+  # Example GitHub source
+  #source = "github.com/unifio/terraform-aws-asg//group/basic"
+  source = "../../group/basic"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}"
