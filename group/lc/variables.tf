@@ -11,12 +11,6 @@ variable "stack_item_fullname" {
 variable "vpc_id" {
 }
 
-variable "region" {
-}
-
-variable "subnets" {
-}
-
 ## LC parameters
 variable "ami" {
 }
@@ -31,43 +25,40 @@ variable "key_name" {
 }
 
 variable "associate_public_ip_address" {
-  default = false
 }
 
 variable "user_data" {
 }
 
 variable "enable_monitoring" {
-  default = true
 }
 
 variable "ebs_optimized" {
-  default = false
 }
 
 variable "placement_tenancy" {
-  default = "default"
 }
 
-## ASG parameters
-variable "max_size" {
+variable "root_vol_type" {
 }
 
-variable "min_size" {
+variable "root_vol_del_on_term" {
 }
 
-variable "hc_grace_period" {
-  default = "300"
+variable "ebs_vol_type" {
 }
 
-variable "hc_check_type" {
-  default = "EC2"
+variable "ebs_device_name" {
 }
 
-variable "force_delete" {
-  default = false
+variable "ebs_snapshot_id" {
 }
 
-variable "wait_for_capacity_timeout" {
-  default = "10m"
+variable "ebs_vol_del_on_term" {
+}
+
+## Conditional toggle
+variable "opposite" {
+  type    = "string"
+  default = "1,0"
 }

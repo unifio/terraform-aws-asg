@@ -190,8 +190,8 @@ resource "template_file" "user_data" {
 ## Provisions basic autoscaling group
 module "example" {
   # Example GitHub source
-  #source = "github.com/unifio/terraform-aws-asg//group/standard"
-  source = "../../group/standard"
+  #source = "github.com/unifio/terraform-aws-asg//group"
+  source = "../../group"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}"

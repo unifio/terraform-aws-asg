@@ -124,8 +124,8 @@ resource "template_file" "user_data" {
 ## Provisions basic autoscaling group
 module "example" {
   # Example GitHub source
-  #source = "github.com/unifio/terraform-aws-asg//group/basic"
-  source = "../../group/basic"
+  #source = "github.com/unifio/terraform-aws-asg//group"
+  source = "../../group"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}"
@@ -142,8 +142,9 @@ module "example" {
   instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
   user_data        = "${template_file.user_data.rendered}"
   key_name         = "${var.key_name}"
+  ebs_snapshot_id  = "expl-snap"
 
   # ASG parameters
-  max_size = "${var.cluster_max_size}"
-  min_size = "${var.cluster_min_size}"
+  max_size = 1
+  min_size = 1
 }
