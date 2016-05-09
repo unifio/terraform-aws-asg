@@ -8,9 +8,6 @@ variable "stack_item_fullname" {
 }
 
 ## VPC parameters
-variable "organization" {
-}
-
 variable "vpc_stack_name" {
 }
 

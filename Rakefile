@@ -1,10 +1,10 @@
 require 'rake'
 
 inputs = {
-  'stack_item_label'    => 'tst',
-  'stack_item_fullname' => 'example',
+  'stack_item_label'    => 'expl-tst',
+  'stack_item_fullname' => 'Example Stack',
   'organization'        => 'unifio',
-  'vpc_stack_name'      => 'test-vpc',
+  'vpc_stack_name'      => 'unifio/tst-vpc',
   'region'              => 'us-west-2',
   'ami'                 => 'ami-xxxxxx',
   'instance_type'       => 't2.small',

@@ -1,7 +1,7 @@
 # AWS Autoscaling group
 
 ## Creates security group
-resource "aws_security_group" "asg-sg" {
+resource "aws_security_group" "sg_asg" {
   name_prefix = "${var.stack_item_label}-"
   description = "${var.stack_item_fullname} security group"
   vpc_id      = "${var.vpc_id}"
@@ -24,7 +24,7 @@ resource "aws_launch_configuration" "lc" {
   instance_type               = "${var.instance_type}"
   iam_instance_profile        = "${var.instance_profile}"
   key_name                    = "${var.key_name}"
-  security_groups             = ["${aws_security_group.asg-sg.id}"]
+  security_groups             = ["${aws_security_group.sg_asg.id}"]
   associate_public_ip_address = "${var.associate_public_ip_address}"
   user_data                   = "${var.user_data}"
   enable_monitoring           = "${var.enable_monitoring}"
@@ -38,7 +38,7 @@ resource "aws_launch_configuration" "lc" {
 
 ## Creates autoscaling group
 resource "aws_autoscaling_group" "asg" {
-  name                      = "${var.stack_item_label}-asg"
+  name                      = "${var.stack_item_label}"
   max_size                  = "${var.max_size}"
   min_size                  = "${var.min_size}"
   launch_configuration      = "${aws_launch_configuration.lc.id}"

@@ -1,8 +1,8 @@
 # Percentage capacity autoscaling configuration
 
 ## Creates simple scaling policy
-resource "aws_autoscaling_policy" "asg-policy" {
-  name                     = "${var.stack_item_label}-policy"
+resource "aws_autoscaling_policy" "asg_policy" {
+  name                     = "${var.stack_item_label}"
   autoscaling_group_name   = "${var.asg_name}"
   adjustment_type          = "${var.adjustment_type}"
   scaling_adjustment       = "${var.scaling_adjustment}"
@@ -12,20 +12,20 @@ resource "aws_autoscaling_policy" "asg-policy" {
 }
 
 ## Creates Simple Notification Service (SNS) topic
-resource "aws_sns_topic" "asg-sns" {
+resource "aws_sns_topic" "sns_asg" {
   name = "${var.stack_item_label}-asg"
 }
 
 ## Configures autoscaling notifications
-resource "aws_autoscaling_notification" "asg-notify" {
+resource "aws_autoscaling_notification" "asg_notify" {
   group_names   = ["${var.asg_name}"]
   notifications = ["${split(",",var.notifications)}"]
-  topic_arn     = "${aws_sns_topic.asg-sns.arn}"
+  topic_arn     = "${aws_sns_topic.sns_asg.arn}"
 }
 
 ## Creates CloudWatch monitor
-resource "aws_cloudwatch_metric_alarm" "asg-monitor" {
-  alarm_name          = "${var.stack_item_label}-asg-monitor"
+resource "aws_cloudwatch_metric_alarm" "monitor_asg" {
+  alarm_name          = "${var.stack_item_label}-asg"
   alarm_description   = "${var.stack_item_fullname}"
   comparison_operator = "${var.comparison_operator}"
   evaluation_periods  = "${var.evaluation_periods}"
@@ -39,5 +39,5 @@ resource "aws_cloudwatch_metric_alarm" "asg-monitor" {
     "AutoScalingGroupName" = "${var.asg_name}"
   }
 
-  alarm_actions = ["${aws_autoscaling_policy.asg-policy.arn}"]
+  alarm_actions = ["${aws_autoscaling_policy.asg_policy.arn}"]
 }
