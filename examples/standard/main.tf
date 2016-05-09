@@ -13,7 +13,7 @@ resource "terraform_remote_state" "vpc" {
   backend = "atlas"
 
   config {
-    name = "${var.organization}/${var.vpc_stack_name}"
+    name = "${var.vpc_stack_name}"
   }
 
   lifecycle {
