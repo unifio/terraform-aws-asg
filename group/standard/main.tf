@@ -2,20 +2,14 @@
 
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
+  name_prefix = "${var.stack_item_label}-asg-"
   description = "${var.stack_item_fullname} security group"
   vpc_id      = "${var.vpc_id}"
 
   tags {
-    Name        = "${var.stack_item_label}-asg-sg"
+    Name        = "${var.stack_item_label}-asg"
     application = "${var.stack_item_fullname}"
     managed_by  = "terraform"
-  }
-
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
   }
 
   lifecycle {
@@ -25,15 +19,17 @@ resource "aws_security_group" "sg_asg" {
 
 ## Creates launch configuration
 resource "aws_launch_configuration" "lc" {
-  name                 = "${var.stack_item_label}-lc"
-  image_id             = "${var.ami}"
-  instance_type        = "${var.instance_type}"
-  iam_instance_profile = "${var.instance_profile}"
-  key_name             = "${var.key_name}"
-  security_groups      = ["${aws_security_group.sg_asg.id}"]
-  enable_monitoring    = "${var.enable_monitoring}"
-  ebs_optimized        = "${var.ebs_optimized}"
-  user_data            = "${var.user_data}"
+  name_prefix                 = "${var.stack_item_label}-"
+  image_id                    = "${var.ami}"
+  instance_type               = "${var.instance_type}"
+  iam_instance_profile        = "${var.instance_profile}"
+  key_name                    = "${var.key_name}"
+  security_groups             = ["${aws_security_group.sg_asg.id}"]
+  associate_public_ip_address = "${var.associate_public_ip_address}"
+  user_data                   = "${var.user_data}"
+  enable_monitoring           = "${var.enable_monitoring}"
+  ebs_optimized               = "${var.ebs_optimized}"
+  placement_tenancy           = "${var.placement_tenancy}"
 
   lifecycle {
     create_before_destroy = true
@@ -42,7 +38,7 @@ resource "aws_launch_configuration" "lc" {
 
 ## Creates autoscaling group
 resource "aws_autoscaling_group" "asg" {
-  name                      = "${var.stack_item_label}-asg"
+  name                      = "${var.stack_item_label}"
   max_size                  = "${var.max_size}"
   min_size                  = "${var.min_size}"
   launch_configuration      = "${aws_launch_configuration.lc.id}"
@@ -52,6 +48,7 @@ resource "aws_autoscaling_group" "asg" {
   min_elb_capacity          = "${var.min_elb_capacity}"
   load_balancers            = ["${split(",",var.load_balancers)}"]
   vpc_zone_identifier       = ["${split(",",var.subnets)}"]
+  wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
 
   tag {
     key                 = "application"

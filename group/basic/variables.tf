@@ -30,6 +30,10 @@ variable "instance_profile" {
 variable "key_name" {
 }
 
+variable "associate_public_ip_address" {
+  default = false
+}
+
 variable "user_data" {
 }
 
@@ -39,6 +43,10 @@ variable "enable_monitoring" {
 
 variable "ebs_optimized" {
   default = false
+}
+
+variable "placement_tenancy" {
+  default = "default"
 }
 
 ## ASG parameters
@@ -58,4 +66,8 @@ variable "hc_check_type" {
 
 variable "force_delete" {
   default = false
+}
+
+variable "wait_for_capacity_timeout" {
+  default = "10m"
 }

@@ -13,7 +13,7 @@ resource "terraform_remote_state" "vpc" {
   backend = "atlas"
 
   config {
-    name = "${var.organization}/${var.vpc_stack_name}"
+    name = "${var.vpc_stack_name}"
   }
 
   lifecycle {
@@ -23,7 +23,7 @@ resource "terraform_remote_state" "vpc" {
 
 ## Creates IAM role
 resource "aws_iam_role" "role" {
-  name = "${var.stack_item_label}-${var.region}-example"
+  name = "${var.stack_item_label}-${var.region}"
   path = "/"
 
   lifecycle {
@@ -47,7 +47,7 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name  = "${var.stack_item_label}-${var.region}-example"
+  name  = "${var.stack_item_label}-${var.region}"
   roles = ["${aws_iam_role.role.name}"]
 
   lifecycle {
@@ -55,7 +55,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
   }
 }
 
-resource "aws_iam_role_policy" "logs" {
+resource "aws_iam_role_policy" "policy_monitoring" {
   name = "monitoring"
   role = "${aws_iam_role.role.id}"
 
@@ -80,7 +80,20 @@ EOF
 }
 
 ## Adds security group rules
-resource "aws_security_group_rule" "ssh" {
+resource "aws_security_group_rule" "sg_asg_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${module.example.sg_id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "sg_asg_ssh" {
   type              = "ingress"
   from_port         = 22
   to_port           = 22
@@ -98,7 +111,7 @@ resource "template_file" "user_data" {
   template = "${file("../templates/user_data.tpl")}"
 
   vars {
-    hostname = "${var.stack_item_label}-example"
+    hostname = "${var.stack_item_label}"
     domain   = "example.org"
     region   = "${var.region}"
   }
@@ -110,7 +123,9 @@ resource "template_file" "user_data" {
 
 ## Provisions basic autoscaling group
 module "example" {
-  source = "github.com/unifio/terraform-aws-asg//group/basic"
+  # Example GitHub source
+  #source = "github.com/unifio/terraform-aws-asg//group/basic"
+  source = "../../group/basic"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}"

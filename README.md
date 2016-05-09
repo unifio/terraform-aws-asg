@@ -9,7 +9,7 @@ Module stack supporting multiple deployment scenarios of an Auto Scaling Group t
 
 ## Requirements ##
 
-- Terraform 0.6.7 or newer
+- Terraform 0.6.15 or newer
 - AWS provider
 
 ## Basic Group Module ##
@@ -27,14 +27,17 @@ The `basic` group module sets up an auto scaling group for simple automated fail
 - `instance_type` - EC2 instance type to associate with the launch configuration.
 - `instance_profile` - IAM instance profile to associate with the launch configuration.
 - `key_name` - SSH key pair to associate with the launch configuration.
+- `associate_public_ip_address` - Associate a public ip address with an instance in a VPC.
 - `user_data` - User data to associate with the launch configuration.
 - `enable_monitoring` - Flag to enable detailed monitoring. Defaults to 'true'.
 - `ebs_optimized` - Flag to enable EBS optimization. Defaults to 'true'.
+- `placement_tenancy` - The tenancy of the instance. Valid values are "default" or "dedicated".
 - `max_size` - Maximum number of instances allowed by the auto scaling group.
 - `min_size` - Minimum number of instance to be maintained by the auto scaling group.
 - `hc_grace_period` - Time allowed after an instance comes into service before checking health.
 - `hc_check_type` - Type of health check performed by the auto scaling group. Choice of 'ELB' or 'EC2'.
 - `force_delete` - Flag to allow deletion of the auto scaling group without waiting for all instances in the pool to terminate. Defaults to 'false'.
+- `wait_for_capacity_timeout` - (Default: "10m") A maximum duration that Terraform should wait for ASG instances to be healthy before timing out.
 
 ### Usage ###
 
@@ -83,14 +86,17 @@ The `standard` group module sets up an auto scaling group for dynamic scaling be
 - `instance_type` - EC2 instance type to associate with the launch configuration.
 - `instance_profile` - IAM instance profile to associate with the launch configuration.
 - `key_name` - SSH key pair to associate with the launch configuration.
+- `associate_public_ip_address` - Associate a public ip address with an instance in a VPC.
 - `user_data` - User data to associate with the launch configuration.
 - `enable_monitoring` - Flag to enable detailed monitoring. Defaults to 'true'.
 - `ebs_optimized` - Flag to enable EBS optimization. Defaults to 'true'.
+- `placement_tenancy` - The tenancy of the instance. Valid values are "default" or "dedicated".
 - `max_size` - Maximum number of instances allowed by the auto scaling group.
 - `min_size` - Minimum number of instance to be maintained by the auto scaling group.
 - `hc_grace_period` - Time allowed after an instance comes into service before checking health.
 - `hc_check_type` - Type of health check performed by the auto scaling group. Choice of 'ELB' or 'EC2'.
 - `force_delete` - Flag to allow deletion of the auto scaling group without waiting for all instances in the pool to terminate. Defaults to 'false'.
+- `wait_for_capacity_timeout` - (Default: "10m") A maximum duration that Terraform should wait for ASG instances to be healthy before timing out.
 - `load_balancers` - List of load balancer names to associate with the auto scaling group.
 - `min_elb_capacity` - Minimum number of healthy instances attached to the ELB that must be maintained during updates.
 
@@ -182,7 +188,7 @@ The `percentage` policy module sets up the policies, notifications and monitors 
 - `adjustment_type` - Specifies the scaling adjustment.  Valid values are 'ChangeInCapacity', or 'ExactCapacity'.
 - `scaling_adjustment` - The number of instances involved in a scaling action.
 - `cooldown` - Seconds between auto scaling activities.
-- `min_adjustment_step` - Minimum number of instances to be involved in a scaling adjustment based on percentage of capacity.
+- `min_adjustment_magnitude` - Minimum number of instances to be involved in a scaling adjustment based on percentage of capacity.
 - `comparison_operator` - Arithmetic operation to use when comparing the thresholds. Valid values are 'GreaterThanOrEqualToThreshold', 'GreaterThanThreshold', 'LessThanThreshold' and 'LessThanOrEqualToThreshold'
 - `evaluation_periods` - The number of periods over which data is compared to the specified threshold.
 - `metric_name` - Name for the alarm's associated metric.
