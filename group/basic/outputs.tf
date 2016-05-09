@@ -1,7 +1,7 @@
 # Output Variables
 
 output "sg_id" {
-  value = "${aws_security_group.asg-sg.id}"
+  value = "${aws_security_group.sg_asg.id}"
 }
 
 output "lc_id" {
