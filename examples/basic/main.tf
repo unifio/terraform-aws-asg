@@ -5,8 +5,7 @@ provider "aws" {
   region = "${var.region}"
 }
 
-provider "atlas" {
-}
+provider "atlas" {}
 
 ## Sources inputs from VPC remote state
 resource "terraform_remote_state" "vpc" {
