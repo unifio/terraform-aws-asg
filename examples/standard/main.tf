@@ -219,8 +219,8 @@ module "example" {
 ## Provisions autoscaling policies and associated resources
 module "scale_up_policy" {
   # Example GitHub source
-  #source = "github.com/unifio/terraform-aws-asg//policy/percentage"
-  source = "../../policy/percentage"
+  #source = "github.com/unifio/terraform-aws-asg//policy"
+  source = "../../policy"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}-up"
@@ -245,8 +245,8 @@ module "scale_up_policy" {
 
 module "scale_down_policy" {
   # Example GitHub source
-  #source = "github.com/unifio/terraform-aws-asg//policy/absolute"
-  source = "../../policy/absolute"
+  #source = "github.com/unifio/terraform-aws-asg//policy"
+  source = "../../policy"
 
   # Resource tags
   stack_item_label    = "${var.stack_item_label}-down"
