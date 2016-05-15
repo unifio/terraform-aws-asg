@@ -232,6 +232,7 @@ module "scale_up_policy" {
   notifications = "autoscaling:EC2_INSTANCE_LAUNCH_ERROR,autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
 
   # Monitor parameters
+  adjustment_type          = "PercentChangeInCapacity"
   scaling_adjustment       = 30
   cooldown                 = 300
   min_adjustment_magnitude = 2
