@@ -30,14 +30,10 @@ variable "min_adjustment_magnitude" {
 ## Conditional toggles
 variable "selector" {
   type = "map"
+
   default = {
     ChangeInCapacity        = 1
     ExactCapacity           = 1
     PercentChangeInCapacity = 0
   }
-}
-
-variable "opposite" {
-  type    = "string"
-  default = "1,0"
 }

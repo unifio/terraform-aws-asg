@@ -51,9 +51,3 @@ variable "load_balancers" {
 variable "min_elb_capacity" {
   type = "string"
 }
-
-## Conditionals
-variable "opposite" {
-  type    = "string"
-  default = "1,0"
-}

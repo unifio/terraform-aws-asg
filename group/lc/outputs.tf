@@ -5,5 +5,5 @@ output "sg_id" {
 }
 
 output "lc_id" {
-  value = "${coalesce(aws_launch_configuration.lc.id, aws_launch_configuration.lc_ebs.id)}"
+  value = "${coalesce(join(",",aws_launch_configuration.lc.*.id),join(",",aws_launch_configuration.lc_ebs.*.id))}"
 }

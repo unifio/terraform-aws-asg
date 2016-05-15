@@ -74,9 +74,3 @@ variable "ebs_snapshot_id" {
 variable "ebs_vol_del_on_term" {
   type = "string"
 }
-
-## Conditionals
-variable "opposite" {
-  type    = "string"
-  default = "1,0"
-}

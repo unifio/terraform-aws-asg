@@ -34,7 +34,7 @@ resource "aws_cloudwatch_metric_alarm" "monitor_asg" {
   metric_name         = "${var.metric_name}"
   namespace           = "${var.name_space}"
   period              = "${var.period}"
-  statistic           = "${var.statistic}"
+  statistic           = "${lookup(var.valid_statistics, var.statistic)}"
   threshold           = "${var.threshold}"
 
   dimensions = {
