@@ -10,11 +10,7 @@ variable "stack_item_fullname" {
 }
 
 ## VPC parameters
-variable "vpc_stack_name" {
-  type = "string"
-}
-
-variable "region" {
+variable "vpc_id" {
   type = "string"
 }
 
@@ -35,28 +31,46 @@ variable "key_name" {
   type = "string"
 }
 
-## ASG parameters
-variable "cluster_max_size" {
+variable "associate_public_ip_address" {
   type = "string"
 }
 
-variable "cluster_min_size" {
+variable "user_data" {
   type = "string"
 }
 
-variable "min_elb_capacity" {
+variable "enable_monitoring" {
   type = "string"
 }
 
-## ELB parameters
-variable "internal" {
+variable "ebs_optimized" {
   type = "string"
 }
 
-variable "cross_zone_lb" {
+variable "placement_tenancy" {
   type = "string"
 }
 
-variable "connection_draining" {
+variable "root_vol_type" {
+  type = "string"
+}
+
+variable "root_vol_del_on_term" {
+  type = "string"
+}
+
+variable "ebs_vol_type" {
+  type = "string"
+}
+
+variable "ebs_device_name" {
+  type = "string"
+}
+
+variable "ebs_snapshot_id" {
+  type = "string"
+}
+
+variable "ebs_vol_del_on_term" {
   type = "string"
 }

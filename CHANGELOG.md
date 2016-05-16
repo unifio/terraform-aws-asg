@@ -2,12 +2,30 @@
 
 #### Consider Implementing:
 * Added support for Autoscaling "StepScaling" policy.
-* Expose `metrics_granularity`, `placement_group`?
+* Expose `metrics_granularity`?
 * Auto-scaling schedule examples/modules.
-* De-duplicate similarities between basic and standard modules.
 * Consider coding `ebs_optimized` against list of [ebs-optimized instances](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSOptimized.html).
+* Expose ephemeral block device support
 
-## 0.1.2 (Apr, 27, 2016)
+## 0.2.0 (May 16, 2016)
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* Resources names updated in several places for standardization. Will cause extra churn in existing environments.
+
+#### IMPROVEMENTS:
+* Introduced deterministic conditional logic for the following scenarios:
+ * Specification of an EBS snapshot to associate with the launch configuration.
+ * Specification of ELB(s) to associate with the auto scaling group.
+ * Specification of percentage based simple auto scaling policies.
+* All variables explicitly typed per HashiCorp best practices.
+* Added name prefixing to security group and launch configuration resources.
+* Exposed `associate_public_ip_address` parameter on launch configuration.
+* Exposed `placement_tenancy` parameter on launch configuration.
+* Exposed root volume configuration parameters on launch configuration.
+* Exposed EBS volume configuration parameters on launch configuration.
+* Exposed `wait_for_capacity_timeout` parameter on auto scaling group.
+
+## 0.1.2 (Apr 27, 2016)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
 * Changed the default value for `ebs_optimized` from `true` -> `false`. This setting is more compatible with the majority of instance types.

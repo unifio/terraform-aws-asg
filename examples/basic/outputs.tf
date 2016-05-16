@@ -1,4 +1,4 @@
-# Output Variables
+# Outputs
 
 output "sg_id" {
   value = "${module.example.sg_id}"
