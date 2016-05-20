@@ -10,7 +10,10 @@
 ## 0.2.0 (May 16, 2016)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
-* Resources names updated in several places for standardization. Will cause extra churn in existing environments.
+* Resources names updated in several places for standardization. Will cause
+extra churn in existing environments.
+* The built in egress security group rule has been remove from the module (see [here](https://github.com/unifio/terraform-aws-asg/compare/v0.1.2...v0.2.0#diff-776572ed86400784bb739b64a2cbcb00L14) and [here](https://github.com/unifio/terraform-aws-asg/compare/v0.1.2...v0.2.0#diff-adb68aea6eb2a951e65c8971444cee02L14)).
+Be sure to declare your own egress rule when using the module (see [here](https://github.com/unifio/terraform-aws-asg/compare/v0.1.2...v0.2.0#diff-6f17df14965c642acbd9d68a62ea120eR148) and [here](https://github.com/unifio/terraform-aws-asg/compare/v0.1.2...v0.2.0#diff-7540fff78d0edcda5f9da593d378a2b3R82))
 
 #### IMPROVEMENTS:
 * Introduced deterministic conditional logic for the following scenarios:
