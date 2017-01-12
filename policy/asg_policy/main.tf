@@ -13,7 +13,7 @@ resource "aws_autoscaling_policy" "asg_policy" {
 
 ## Creates simple percentage scaling policy
 resource "aws_autoscaling_policy" "asg_policy_percent" {
-  count                    = "${lookup(var.selector, var.adjustment_type) + 1 % 2}"
+  count                    = "${(lookup(var.selector, var.adjustment_type) + 1) % 2}"
   name                     = "${var.stack_item_label}"
   autoscaling_group_name   = "${var.asg_name}"
   adjustment_type          = "${var.adjustment_type}"
