@@ -8,15 +8,11 @@ provider "aws" {
 provider "atlas" {}
 
 ## Sources inputs from VPC remote state
-resource "terraform_remote_state" "vpc" {
+data "terraform_remote_state" "vpc" {
   backend = "atlas"
 
   config {
     name = "${var.vpc_stack_name}"
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
 
@@ -97,7 +93,7 @@ resource "aws_security_group_rule" "sg_asg_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["${terraform_remote_state.vpc.output.lan_access_cidr}"]
+  cidr_blocks       = ["${data.terraform_remote_state.vpc.output.lan_access_cidr}"]
   security_group_id = "${module.example.sg_id}"
 
   lifecycle {
@@ -106,17 +102,13 @@ resource "aws_security_group_rule" "sg_asg_ssh" {
 }
 
 ## Generates instance user data from a template
-resource "template_file" "user_data" {
+data "template_file" "user_data" {
   template = "${file("../templates/user_data.tpl")}"
 
   vars {
     hostname = "${var.stack_item_label}"
     domain   = "example.org"
     region   = "${var.region}"
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
 
@@ -131,15 +123,15 @@ module "example" {
   stack_item_fullname = "${var.stack_item_fullname}"
 
   # VPC parameters
-  vpc_id  = "${terraform_remote_state.vpc.output.vpc_id}"
-  subnets = "${terraform_remote_state.vpc.output.lan_subnet_ids}"
+  vpc_id  = "${data.terraform_remote_state.vpc.output.vpc_id}"
+  subnets = "${data.terraform_remote_state.vpc.output.lan_subnet_ids}"
   region  = "${var.region}"
 
   # LC parameters
   ami              = "${var.ami}"
   instance_type    = "${var.instance_type}"
   instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
-  user_data        = "${template_file.user_data.rendered}"
+  user_data        = "${data.template_file.user_data.rendered}"
   key_name         = "${var.key_name}"
   ebs_snapshot_id  = "expl-snap"
 

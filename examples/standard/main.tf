@@ -8,15 +8,11 @@ provider "aws" {
 provider "atlas" {}
 
 ## Sources inputs from VPC remote state
-resource "terraform_remote_state" "vpc" {
+data "terraform_remote_state" "vpc" {
   backend = "atlas"
 
   config {
     name = "${var.vpc_stack_name}"
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
 
@@ -82,7 +78,7 @@ EOF
 resource "aws_security_group" "sg_elb" {
   name_prefix = "${var.stack_item_label}-elb-"
   description = "Standard ASG example ELB"
-  vpc_id      = "${terraform_remote_state.vpc.output.vpc_id}"
+  vpc_id      = "${data.terraform_remote_state.vpc.output.vpc_id}"
 
   tags {
     Name        = "${var.stack_item_label}-elb"
@@ -113,7 +109,7 @@ resource "aws_security_group" "sg_elb" {
 ## Creates ELB
 resource "aws_elb" "elb" {
   security_groups           = ["${aws_security_group.sg_elb.id}"]
-  subnets                   = ["${split(",",terraform_remote_state.vpc.output.lan_subnet_ids)}"]
+  subnets                   = ["${split(",",data.terraform_remote_state.vpc.output.lan_subnet_ids)}"]
   internal                  = "${var.internal}"
   cross_zone_load_balancing = "${var.cross_zone_lb}"
   connection_draining       = "${var.connection_draining}"
@@ -172,7 +168,7 @@ resource "aws_security_group_rule" "sg_asg_elb" {
 }
 
 ## Generates instance user data from a template
-resource "template_file" "user_data" {
+data "template_file" "user_data" {
   template = "${file("../templates/user_data.tpl")}"
 
   vars {
@@ -197,15 +193,15 @@ module "example" {
   stack_item_fullname = "${var.stack_item_fullname}"
 
   # VPC parameters
-  vpc_id  = "${terraform_remote_state.vpc.output.vpc_id}"
-  subnets = "${terraform_remote_state.vpc.output.lan_subnet_ids}"
+  vpc_id  = "${data.terraform_remote_state.vpc.output.vpc_id}"
+  subnets = "${data.terraform_remote_state.vpc.output.lan_subnet_ids}"
   region  = "${var.region}"
 
   # LC parameters
   ami              = "${var.ami}"
   instance_type    = "${var.instance_type}"
   instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
-  user_data        = "${template_file.user_data.rendered}"
+  user_data        = "${data.template_file.user_data.rendered}"
   key_name         = "${var.key_name}"
 
   # ASG parameters
