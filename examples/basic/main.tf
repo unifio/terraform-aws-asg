@@ -5,17 +5,6 @@ provider "aws" {
   region = "${var.region}"
 }
 
-provider "atlas" {}
-
-## Sources inputs from VPC remote state
-data "terraform_remote_state" "vpc" {
-  backend = "atlas"
-
-  config {
-    name = "${var.vpc_stack_name}"
-  }
-}
-
 ## Creates IAM role
 resource "aws_iam_role" "role" {
   name = "${var.stack_item_label}-${var.region}"
@@ -93,7 +82,7 @@ resource "aws_security_group_rule" "sg_asg_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["${data.terraform_remote_state.vpc.output.lan_access_cidr}"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = "${module.example.sg_id}"
 
   lifecycle {
@@ -123,8 +112,8 @@ module "example" {
   stack_item_fullname = "${var.stack_item_fullname}"
 
   # VPC parameters
-  vpc_id  = "${data.terraform_remote_state.vpc.output.vpc_id}"
-  subnets = "${data.terraform_remote_state.vpc.output.lan_subnet_ids}"
+  vpc_id  = "${var.vpc_id}"
+  subnets = "${var.lan_subnet_ids}"
   region  = "${var.region}"
 
   # LC parameters

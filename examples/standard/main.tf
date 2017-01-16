@@ -5,17 +5,6 @@ provider "aws" {
   region = "${var.region}"
 }
 
-provider "atlas" {}
-
-## Sources inputs from VPC remote state
-data "terraform_remote_state" "vpc" {
-  backend = "atlas"
-
-  config {
-    name = "${var.vpc_stack_name}"
-  }
-}
-
 ## Creates IAM role
 resource "aws_iam_role" "role" {
   name = "${var.stack_item_label}-${var.region}"
@@ -78,7 +67,7 @@ EOF
 resource "aws_security_group" "sg_elb" {
   name_prefix = "${var.stack_item_label}-elb-"
   description = "Standard ASG example ELB"
-  vpc_id      = "${data.terraform_remote_state.vpc.output.vpc_id}"
+  vpc_id      = "${var.vpc_id}"
 
   tags {
     Name        = "${var.stack_item_label}-elb"
@@ -109,7 +98,7 @@ resource "aws_security_group" "sg_elb" {
 ## Creates ELB
 resource "aws_elb" "elb" {
   security_groups           = ["${aws_security_group.sg_elb.id}"]
-  subnets                   = ["${split(",",data.terraform_remote_state.vpc.output.lan_subnet_ids)}"]
+  subnets                   = ["${split(",",var.lan_subnet_ids)}"]
   internal                  = "${var.internal}"
   cross_zone_load_balancing = "${var.cross_zone_lb}"
   connection_draining       = "${var.connection_draining}"
@@ -176,10 +165,6 @@ data "template_file" "user_data" {
     domain   = "example.org"
     region   = "${var.region}"
   }
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 ## Provisions basic autoscaling group
@@ -193,8 +178,8 @@ module "example" {
   stack_item_fullname = "${var.stack_item_fullname}"
 
   # VPC parameters
-  vpc_id  = "${data.terraform_remote_state.vpc.output.vpc_id}"
-  subnets = "${data.terraform_remote_state.vpc.output.lan_subnet_ids}"
+  vpc_id  = "${var.vpc_id}"
+  subnets = "${var.lan_subnet_ids}"
   region  = "${var.region}"
 
   # LC parameters
