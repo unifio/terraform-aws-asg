@@ -10,11 +10,15 @@ variable "stack_item_fullname" {
 }
 
 ## VPC parameters
-variable "vpc_stack_name" {
+variable "vpc_id" {
   type = "string"
 }
 
 variable "region" {
+  type = "string"
+}
+
+variable "lan_subnet_ids" {
   type = "string"
 }
 
