@@ -9,6 +9,10 @@ variable "stack_item_fullname" {
   type = "string"
 }
 
+variable "env" {
+  type = "string"
+}
+
 ## VPC parameters
 variable "subnets" {
   type = "string"
