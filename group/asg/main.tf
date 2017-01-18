@@ -24,6 +24,18 @@ resource "aws_autoscaling_group" "asg" {
     value               = "${var.stack_item_label}"
     propagate_at_launch = true
   }
+
+  tag {
+    key                 = "env"
+    value               = "${var.env}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "managed_by"
+    value               = "terraform"
+    propagate_at_launch = true
+  }
 }
 
 resource "aws_autoscaling_group" "asg_elb" {
@@ -49,6 +61,18 @@ resource "aws_autoscaling_group" "asg_elb" {
   tag {
     key                 = "Name"
     value               = "${var.stack_item_label}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "env"
+    value               = "${var.env}"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "managed_by"
+    value               = "terraform"
     propagate_at_launch = true
   }
 }

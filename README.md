@@ -21,6 +21,7 @@ The group module will provision security group, launch configuration and auto sc
 **Resource labels**
 * `stack_item_label` - Short form identifier for this stack. This value is used to create the **Name** resource tag for resources created by this stack item, and also serves as a unique key for re-use.
 * `stack_item_fullname` - Long form descriptive name for this stack item. This value is used to create the **application** resource tag for resources created by this stack item.
+* `env` - Descriptive name for this stack's environment. This value is used to create the **tag** resource tag for resources created by this stack item.
 
 **Virtual Private Cloud (VPC) parameters**
 * `vpc_id` - ID of the target VPC.
