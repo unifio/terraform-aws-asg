@@ -7,6 +7,11 @@
 * Consider coding `ebs_optimized` against list of [ebs-optimized instances](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSOptimized.html).
 * Expose ephemeral block device support
 
+## 0.2.1 (Jan 18, 2016)
+
+#### IMPROVEMENTS:
+* Update modules to use terraform 0.8.x order of operations on math operators.
+
 ## 0.2.0 (May 16, 2016)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
