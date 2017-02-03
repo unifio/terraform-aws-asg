@@ -1,5 +1,10 @@
 # AWS Auto Scaling Configuration
 
+## Set Terraform version constraint
+terraform {
+  required_version = "> 0.8.0"
+}
+
 ## Creates launch configuration & security group
 module "lc" {
   source = "lc"
