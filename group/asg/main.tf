@@ -6,7 +6,7 @@ resource "aws_autoscaling_group" "asg" {
   name                      = "${var.stack_item_label}-asg"
   max_size                  = "${var.max_size}"
   min_size                  = "${var.min_size}"
-  launch_configuration      = "${aws_launch_configuration.lc.name}"
+  launch_configuration      = "${var.lc_id}"
   health_check_grace_period = "${var.hc_grace_period}"
   health_check_type         = "EC2"
   force_delete              = "${var.force_delete}"
