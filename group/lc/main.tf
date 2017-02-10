@@ -20,6 +20,7 @@ resource "aws_security_group" "sg_asg" {
 ## Creates launch configuration
 resource "aws_launch_configuration" "lc" {
   count                       = "${signum(length(var.ebs_snapshot_id)) + 1 % 2}"
+  name_prefix                 = "${var.stack_item_label}-"
   image_id                    = "${var.ami}"
   instance_type               = "${var.instance_type}"
   iam_instance_profile        = "${var.instance_profile}"
