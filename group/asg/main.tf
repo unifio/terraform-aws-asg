@@ -3,7 +3,7 @@
 ## Creates auto scaling group
 resource "aws_autoscaling_group" "asg" {
   count                     = "${signum(length(var.min_elb_capacity)) + 1 % 2}"
-  name                      = "${var.stack_item_label}-asg"
+  name                      = "${var.lc_id}-asg"
   max_size                  = "${var.max_size}"
   min_size                  = "${var.min_size}"
   launch_configuration      = "${var.lc_id}"
