@@ -24,6 +24,10 @@ resource "aws_autoscaling_group" "asg" {
     value               = "${var.stack_item_label}"
     propagate_at_launch = true
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_autoscaling_group" "asg_elb" {
