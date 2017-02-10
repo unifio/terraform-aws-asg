@@ -28,6 +28,8 @@ resource "aws_autoscaling_group" "asg" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = ["aws_launch_configuration.lc"]
 }
 
 resource "aws_autoscaling_group" "asg_elb" {
