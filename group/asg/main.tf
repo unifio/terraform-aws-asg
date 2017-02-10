@@ -3,10 +3,10 @@
 ## Creates auto scaling group
 resource "aws_autoscaling_group" "asg" {
   count                     = "${signum(length(var.min_elb_capacity)) + 1 % 2}"
-  name_prefix               = "${var.stack_item_label}-asg-"
+  name                      = "${var.stack_item_label}-asg-${aws_launch_configuration.lc.name}"
   max_size                  = "${var.max_size}"
   min_size                  = "${var.min_size}"
-  launch_configuration      = "${var.lc_id}"
+  launch_configuration      = "${aws_launch_configuration.lc.name}"
   health_check_grace_period = "${var.hc_grace_period}"
   health_check_type         = "EC2"
   force_delete              = "${var.force_delete}"
