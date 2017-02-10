@@ -29,7 +29,6 @@ resource "aws_autoscaling_group" "asg" {
     create_before_destroy = true
   }
 
-  depends_on = ["${var.lc_id}"]
 }
 
 resource "aws_autoscaling_group" "asg_elb" {
