@@ -6,6 +6,7 @@ resource "aws_autoscaling_group" "asg" {
   name                      = "${var.lc_id}-asg"
   max_size                  = "${var.max_size}"
   min_size                  = "${var.min_size}"
+  min_elb_capacity          = "${var.min_elb_capacity}"
   launch_configuration      = "${var.lc_id}"
   health_check_grace_period = "${var.hc_grace_period}"
   health_check_type         = "EC2"
