@@ -1,0 +1,16 @@
+---
+:backends:
+  - yaml
+
+:logger: noop
+
+:merge_behavior: 'deeper'
+
+:hierarchy:
+  - "stacks/common"
+  - "stacks/%{stack}"
+  - 'globals'
+  - 'environments'
+
+:yaml:
+  :datadir: data
