@@ -1,14 +1,23 @@
 machine:
-  environment:
-    TF_VERSION: 0.6.16
-    TF_URL: https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-dependencies:
-  pre:
-    - "[[ -f \"${HOME}/bin/terraform\" ]] || (wget -O \"/tmp/tf.zip\" \"${TF_URL}\" && unzip -o -d \"${HOME}/bin\" \"/tmp/tf.zip\")"
-    - terraform version
+  services:
+    - docker
+
 test:
   override:
-    # Style check
-    - "[ $(terraform fmt | wc -l) -eq 0 ]"
-    # Verify plan
-    - bundle exec rake
+    # Verify
+    - bin/covalence ci
+    # UAT
+    - bin/covalence basic:defaults:apply
+    ## TODO: Currently need to run this twice to account for a race condition in LC updates
+    - bin/covalence basic:lc-options:apply || true
+    - bin/covalence basic:lc-options:apply
+    - bin/covalence basic:asg-options:apply
+    - bin/covalence basic:asg-options:destroy
+    - bin/covalence complete:lc-ebs-new:apply
+    ## TODO: Currently need to run this twice to account for a race condition in LC updates
+    - bin/covalence complete:lc-ebs-snap:apply || true
+    - bin/covalence complete:lc-ebs-snap:apply
+    - bin/covalence complete:lc-ebs-snap:destroy
+    - bin/covalence complete:asg-elb:apply
+    - bin/covalence complete:asg-elb-wait:apply
+    - bin/covalence complete:asg-elb-wait:destroy

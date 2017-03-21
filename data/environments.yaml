@@ -1,0 +1,14 @@
+---
+# Environments
+
+environments:
+  basic:
+    - defaults
+    - lc-options
+    - asg-options
+
+  complete:
+    - lc-ebs-new
+    - lc-ebs-snap
+    - asg-elb
+    - asg-elb-wait
