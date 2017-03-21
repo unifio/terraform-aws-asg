@@ -10,28 +10,35 @@ module "lc" {
   source = "lc"
 
   ### Resource labels
-  stack_item_label    = "${var.stack_item_label}"
   stack_item_fullname = "${var.stack_item_fullname}"
+  stack_item_label    = "${var.stack_item_label}"
 
   ### VPC parameters
   vpc_id = "${var.vpc_id}"
 
-  ## LC parameters
+  ### LC parameters
   ami                         = "${var.ami}"
-  instance_type               = "${var.instance_type}"
-  instance_profile            = "${var.instance_profile}"
-  key_name                    = "${var.key_name}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
-  user_data                   = "${var.user_data}"
-  enable_monitoring           = "${var.enable_monitoring}"
   ebs_optimized               = "${var.ebs_optimized}"
-  placement_tenancy           = "${var.placement_tenancy}"
-  root_vol_type               = "${var.root_vol_type}"
-  root_vol_del_on_term        = "${var.root_vol_del_on_term}"
-  ebs_vol_type                = "${var.ebs_vol_type}"
-  ebs_device_name             = "${var.ebs_device_name}"
-  ebs_snapshot_id             = "${var.ebs_snapshot_id}"
   ebs_vol_del_on_term         = "${var.ebs_vol_del_on_term}"
+  ebs_vol_device_name         = "${var.ebs_vol_device_name}"
+  ebs_vol_encrypted           = "${var.ebs_vol_encrypted}"
+  ebs_vol_iops                = "${var.ebs_vol_iops}"
+  ebs_vol_size                = "${var.ebs_vol_size}"
+  ebs_vol_snapshot_id         = "${var.ebs_vol_snapshot_id}"
+  ebs_vol_type                = "${var.ebs_vol_type}"
+  enable_monitoring           = "${var.enable_monitoring}"
+  instance_profile            = "${var.instance_profile}"
+  instance_type               = "${var.instance_type}"
+  key_name                    = "${var.key_name}"
+  placement_tenancy           = "${var.placement_tenancy}"
+  root_vol_del_on_term        = "${var.root_vol_del_on_term}"
+  root_vol_iops               = "${var.root_vol_iops}"
+  root_vol_size               = "${var.root_vol_size}"
+  root_vol_type               = "${var.root_vol_type}"
+  security_groups             = ["${var.security_groups}"]
+  spot_price                  = "${var.spot_price}"
+  user_data                   = "${var.user_data}"
 }
 
 ## Creates auto scaling group

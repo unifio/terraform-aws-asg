@@ -1,22 +1,17 @@
 # Input Variables
 
 ## Resource tags
-variable "stack_item_label" {
-  type        = "string"
-  description = "Short form identifier for this stack. This value is used to create the 'Name' resource tag for resources created by this stack item, and also serves as a unique key for re-use."
-}
-
 variable "stack_item_fullname" {
   type        = "string"
   description = "Long form descriptive name for this stack item. This value is used to create the 'application' resource tag for resources created by this stack item."
 }
 
-## VPC parameters
-variable "vpc_id" {
+variable "stack_item_label" {
   type        = "string"
-  description = "ID of the target VPC."
+  description = "Short form identifier for this stack. This value is used to create the 'Name' resource tag for resources created by this stack item, and also serves as a unique key for re-use."
 }
 
+## VPC parameters
 variable "region" {
   type        = "string"
   description = "AWS region to be utilized."
@@ -27,10 +22,79 @@ variable "subnets" {
   description = "List of VPC subnets to associate with the auto scaling group."
 }
 
+variable "vpc_id" {
+  type        = "string"
+  description = "ID of the target VPC."
+}
+
 ## LC parameters
 variable "ami" {
   type        = "string"
   description = "Amazon Machine Image (AMI) to associate with the launch configuration."
+}
+
+variable "associate_public_ip_address" {
+  type        = "string"
+  description = "Flag for associating public IP addresses with instances managed by the auto scaling group."
+  default     = ""
+}
+
+variable "ebs_optimized" {
+  type        = "string"
+  description = "Flag to enable EBS optimization."
+  default     = "false"
+}
+
+variable "ebs_vol_del_on_term" {
+  type        = "string"
+  description = "Whether the volume should be destroyed on instance termination."
+  default     = "true"
+}
+
+variable "ebs_vol_device_name" {
+  type        = "string"
+  description = "The name of the device to mount."
+  default     = ""
+}
+
+variable "ebs_vol_encrypted" {
+  type        = "string"
+  description = "Whether the volume should be encrypted or not. Do not use this option if you are using 'snapshot_id' as the encrypted flag will be determined by the snapshot."
+  default     = ""
+}
+
+/*
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html
+For the best per-I/O latency experience, we recommend that you provision an IOPS-to-GiB ratio greater than 2:1. For example, a 2,000 IOPS volume should be smaller than 1,000 GiB.
+*/
+variable "ebs_vol_iops" {
+  type        = "string"
+  description = "The amount of provisioned IOPS"
+  default     = "2000"
+}
+
+variable "ebs_vol_size" {
+  type        = "string"
+  description = "The size of the volume in gigabytes."
+  default     = ""
+}
+
+variable "ebs_vol_snapshot_id" {
+  type        = "string"
+  description = "The Snapshot ID to mount."
+  default     = ""
+}
+
+variable "ebs_vol_type" {
+  type        = "string"
+  description = "The type of volume. Valid values are 'standard', 'gp2' and 'io1'."
+  default     = "gp2"
+}
+
+variable "enable_monitoring" {
+  type        = "string"
+  description = "Flag to enable detailed monitoring."
+  default     = ""
 }
 
 variable "instance_type" {
@@ -41,34 +105,13 @@ variable "instance_type" {
 variable "instance_profile" {
   type        = "string"
   description = "IAM instance profile to associate with the launch configuration."
+  default     = ""
 }
 
 variable "key_name" {
   type        = "string"
   description = "SSH key pair to associate with the launch configuration."
-}
-
-variable "associate_public_ip_address" {
-  type        = "string"
-  description = "Flag for associating public IP addresses with instances managed by the auto scaling group."
-  default     = false
-}
-
-variable "user_data" {
-  type        = "string"
-  description = "Instance initialization data to associate with the launch configuration."
-}
-
-variable "enable_monitoring" {
-  type        = "string"
-  description = "Flag to enable detailed monitoring."
-  default     = true
-}
-
-variable "ebs_optimized" {
-  type        = "string"
-  description = "Flag to enable EBS optimization."
-  default     = false
+  default     = ""
 }
 
 variable "placement_tenancy" {
@@ -77,40 +120,50 @@ variable "placement_tenancy" {
   default     = "default"
 }
 
-variable "root_vol_type" {
-  type        = "string"
-  description = "The type of volume. Valid values are 'standard' or 'gp2'."
-  default     = "gp2"
-}
-
 variable "root_vol_del_on_term" {
   type        = "string"
   description = "Whether the volume should be destroyed on instance termination."
-  default     = true
+  default     = "true"
 }
 
-variable "ebs_vol_type" {
+/*
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html
+For the best per-I/O latency experience, we recommend that you provision an IOPS-to-GiB ratio greater than 2:1. For example, a 2,000 IOPS volume should be smaller than 1,000 GiB.
+*/
+variable "root_vol_iops" {
   type        = "string"
-  description = "The type of volume. Valid values are 'standard' or 'gp2'."
-  default     = "gp2"
+  description = "The amount of provisioned IOPS"
+  default     = "2000"
 }
 
-variable "ebs_device_name" {
+variable "root_vol_size" {
   type        = "string"
-  description = "The name of the device to mount."
-  default     = "/dev/xvda"
-}
-
-variable "ebs_snapshot_id" {
-  type        = "string"
-  description = "The Snapshot ID to mount."
+  description = "The size of the volume in gigabytes."
   default     = ""
 }
 
-variable "ebs_vol_del_on_term" {
+variable "root_vol_type" {
   type        = "string"
-  description = "Whether the volume should be destroyed on instance termination."
-  default     = true
+  description = "The type of volume. Valid values are 'standard', 'gp2' and 'io1'."
+  default     = "gp2"
+}
+
+variable "security_groups" {
+  type        = "list"
+  description = "A list of associated security group IDs"
+  default     = []
+}
+
+variable "spot_price" {
+  type        = "string"
+  description = "The price to use for reserving spot instances."
+  default     = ""
+}
+
+variable "user_data" {
+  type        = "string"
+  description = "Instance initialization data to associate with the launch configuration."
+  default     = ""
 }
 
 ## ASG parameters
@@ -139,7 +192,7 @@ variable "hc_check_type" {
 variable "force_delete" {
   type        = "string"
   description = "Flag to allow deletion of the auto scaling group without waiting for all instances in the pool to terminate."
-  default     = false
+  default     = "false"
 }
 
 variable "wait_for_capacity_timeout" {

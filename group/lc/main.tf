@@ -2,14 +2,14 @@
 
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
-  name_prefix = "${var.stack_item_label}-asg-"
   description = "${var.stack_item_fullname} security group"
+  name_prefix = "${var.stack_item_label}-asg-"
   vpc_id      = "${var.vpc_id}"
 
   tags {
-    Name        = "${var.stack_item_label}-asg"
     application = "${var.stack_item_fullname}"
     managed_by  = "terraform"
+    Name        = "${var.stack_item_label}-asg"
   }
 
   lifecycle {
@@ -19,22 +19,26 @@ resource "aws_security_group" "sg_asg" {
 
 ## Creates launch configuration
 resource "aws_launch_configuration" "lc" {
-  count                       = "${signum(length(var.ebs_snapshot_id)) + 1 % 2}"
-  name_prefix                 = "${var.stack_item_label}-"
+  count = "${length(var.ebs_vol_device_name) > 0 ? 0 : 1}"
+
+  associate_public_ip_address = "${var.associate_public_ip_address}"
+  ebs_optimized               = "${var.ebs_optimized}"
+  enable_monitoring           = "${var.enable_monitoring}"
+  iam_instance_profile        = "${var.instance_profile}"
   image_id                    = "${var.ami}"
   instance_type               = "${var.instance_type}"
-  iam_instance_profile        = "${var.instance_profile}"
   key_name                    = "${var.key_name}"
-  security_groups             = ["${aws_security_group.sg_asg.id}"]
-  associate_public_ip_address = "${var.associate_public_ip_address}"
-  user_data                   = "${var.user_data}"
-  enable_monitoring           = "${var.enable_monitoring}"
-  ebs_optimized               = "${var.ebs_optimized}"
+  name_prefix                 = "${var.stack_item_label}-"
   placement_tenancy           = "${var.placement_tenancy}"
+  security_groups             = ["${distinct(concat(list(aws_security_group.sg_asg.id), compact(var.security_groups)))}"]
+  spot_price                  = "${var.spot_price}"
+  user_data                   = "${var.user_data}"
 
   root_block_device {
-    volume_type           = "${var.root_vol_type}"
     delete_on_termination = "${var.root_vol_del_on_term}"
+    iops                  = "${var.root_vol_type == "io1" ? var.root_vol_iops : "0" }"
+    volume_size           = "${length(var.root_vol_size) > 0 ? var.root_vol_size : "8"}"
+    volume_type           = "${var.root_vol_type}"
   }
 
   lifecycle {
@@ -43,29 +47,36 @@ resource "aws_launch_configuration" "lc" {
 }
 
 resource "aws_launch_configuration" "lc_ebs" {
-  count                       = "${signum(length(var.ebs_snapshot_id))}"
-  name_prefix                 = "${var.stack_item_label}-"
+  count = "${length(var.ebs_vol_device_name) > 0 ? 1 : 0}"
+
+  associate_public_ip_address = "${var.associate_public_ip_address}"
+  ebs_optimized               = "${var.ebs_optimized}"
+  enable_monitoring           = "${var.enable_monitoring}"
+  iam_instance_profile        = "${var.instance_profile}"
   image_id                    = "${var.ami}"
   instance_type               = "${var.instance_type}"
-  iam_instance_profile        = "${var.instance_profile}"
   key_name                    = "${var.key_name}"
-  security_groups             = ["${aws_security_group.sg_asg.id}"]
-  associate_public_ip_address = "${var.associate_public_ip_address}"
-  user_data                   = "${var.user_data}"
-  enable_monitoring           = "${var.enable_monitoring}"
-  ebs_optimized               = "${var.ebs_optimized}"
+  name_prefix                 = "${var.stack_item_label}-"
   placement_tenancy           = "${var.placement_tenancy}"
+  security_groups             = ["${distinct(concat(list(aws_security_group.sg_asg.id), compact(var.security_groups)))}"]
+  spot_price                  = "${var.spot_price}"
+  user_data                   = "${var.user_data}"
 
   root_block_device {
-    volume_type           = "${var.root_vol_type}"
     delete_on_termination = "${var.root_vol_del_on_term}"
+    iops                  = "${var.root_vol_type == "io1" ? var.root_vol_iops : "0" }"
+    volume_size           = "${length(var.root_vol_size) > 0 ? var.root_vol_size : "0"}"
+    volume_type           = "${var.root_vol_type}"
   }
 
   ebs_block_device {
-    volume_type           = "${var.ebs_vol_type}"
-    device_name           = "${var.ebs_device_name}"
-    snapshot_id           = "${var.ebs_snapshot_id}"
     delete_on_termination = "${var.ebs_vol_del_on_term}"
+    device_name           = "${var.ebs_vol_device_name}"
+    encrypted             = "${length(var.ebs_vol_snapshot_id) > 0 ? "" : var.ebs_vol_encrypted}"
+    iops                  = "${var.ebs_vol_type == "io1" ? var.ebs_vol_iops : "0" }"
+    snapshot_id           = "${var.ebs_vol_snapshot_id}"
+    volume_size           = "${length(var.ebs_vol_snapshot_id) > 0 ? "0" : var.ebs_vol_size}"
+    volume_type           = "${var.ebs_vol_type}"
   }
 
   lifecycle {
