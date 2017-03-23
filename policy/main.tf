@@ -1,4 +1,9 @@
-# Percentage capacity autoscaling configuration
+# Simple scaling auto scaling policy
+
+## Set Terraform version constraint
+terraform {
+  required_version = "> 0.8.0"
+}
 
 ## Creates simple scaling policy
 resource "aws_autoscaling_policy" "asg_policy_simple" {

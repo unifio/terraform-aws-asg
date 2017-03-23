@@ -12,11 +12,6 @@ variable "stack_item_label" {
 }
 
 ## VPC parameters
-variable "region" {
-  type        = "string"
-  description = "AWS region to be utilized."
-}
-
 variable "subnets" {
   type        = "list"
   description = "A list of subnet IDs to launch resources in"
@@ -97,15 +92,36 @@ variable "enable_monitoring" {
   default     = ""
 }
 
-variable "instance_type" {
+variable "instance_based_naming_enabled" {
   type        = "string"
-  description = "EC2 instance type to associate with the launch configuration."
+  description = "Flag to enable instance-id based name tagging."
+  default     = ""
+}
+
+variable "instance_name_prefix" {
+  type        = "string"
+  description = "Sring to prepend instance-id based name tags with."
+  default     = ""
 }
 
 variable "instance_profile" {
   type        = "string"
   description = "IAM instance profile to associate with the launch configuration."
   default     = ""
+}
+
+variable "instance_tags" {
+  type        = "map"
+  description = "Map of tags to add to isntances."
+
+  default = {
+    "" = ""
+  }
+}
+
+variable "instance_type" {
+  type        = "string"
+  description = "EC2 instance type to associate with the launch configuration."
 }
 
 variable "key_name" {

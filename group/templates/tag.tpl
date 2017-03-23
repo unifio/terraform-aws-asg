@@ -1,0 +1,1 @@
+  - "`which aws` ec2 create-tags --region ${region} --resources `curl http://169.254.169.254/latest/meta-data/instance-id` --tags Key=${key},Value=${value}"

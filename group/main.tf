@@ -5,6 +5,54 @@ terraform {
   required_version = "> 0.8.0"
 }
 
+## Creates cloudconfig fragments for tagging
+data "aws_region" "current" {
+  current = true
+}
+
+data "template_file" "name" {
+  template = "${var.instance_based_naming_enabled == "true" ? file("${path.module}/templates/name.tpl") : ""}"
+
+  vars {
+    name_prefix = "${length(var.instance_name_prefix) > 0 ? var.instance_name_prefix : var.stack_item_label}"
+    region      = "${data.aws_region.current.name}"
+  }
+}
+
+data "template_file" "tags" {
+  count = "${length(keys(var.instance_tags))}"
+
+  template = "${element(keys(var.instance_tags),count.index) != "" ? file("${path.module}/templates/tag.tpl") : ""}"
+
+  vars {
+    key    = "${element(keys(var.instance_tags),count.index)}"
+    region = "${data.aws_region.current.name}"
+    value  = "${lookup(var.instance_tags,element(keys(var.instance_tags),count.index))}"
+  }
+}
+
+data "template_cloudinit_config" "cloud_config" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    content_type = "text/cloud-config"
+    content      = "${var.user_data}"
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.name.rendered}"
+    merge_type   = "list(append)+dict(recurse_array)+str()"
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = "#cloud-config\nruncmd:\n${join("",data.template_file.tags.*.rendered)}"
+    merge_type   = "list(append)+dict(recurse_array)+str()"
+  }
+}
+
 ## Creates launch configuration & security group
 module "lc" {
   source = "lc"
@@ -38,7 +86,7 @@ module "lc" {
   root_vol_type               = "${var.root_vol_type}"
   security_groups             = ["${var.security_groups}"]
   spot_price                  = "${var.spot_price}"
-  user_data                   = "${var.user_data}"
+  user_data                   = "${data.template_cloudinit_config.cloud_config.rendered}"
 }
 
 ## Creates auto scaling group
