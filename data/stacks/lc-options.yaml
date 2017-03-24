@@ -1,0 +1,26 @@
+---
+# Basic LC options example
+
+## Module
+lc-options::module: 'examples/basic'
+
+## State storage
+lc-options::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-asg/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::basic::vars:
+  # LC parameters
+  associate_public_ip_address: 'true'
+  enable_monitoring: 'true'
+  key_name: 'unifio_ops_pub'
+  security_groups: 'sg-d4f906bd'
+
+  # ASG parameters
+  max_size: '1'
+
+  # TODO: Add test for spot price
+  # TODO: Add test for io1 root volume

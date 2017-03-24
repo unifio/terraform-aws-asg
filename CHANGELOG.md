@@ -1,11 +1,54 @@
 ## Unreleased
 
 #### Consider Implementing:
-* Added support for Autoscaling "StepScaling" policy.
-* Expose `metrics_granularity`?
-* Auto-scaling schedule examples/modules.
 * Consider coding `ebs_optimized` against list of [ebs-optimized instances](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSOptimized.html).
-* Expose ephemeral block device support
+* Expose ephemeral block device support.
+* Expose lifecycle hook support.
+* Expose scheduling support.
+* Added support for Autoscaling "StepScaling" policy.
+* Break notifications out to support aggregation of groups and notifications
+to a single SNS topic.
+* Extend multi-part user_data mechanism to support more use cases.
+
+## 0.3.0 (March 24, 2017)
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* The following parameters were renamed:
+ * `ebs_device_name` to `ebs_vol_device_name`
+ * `ebs_snapshot_id` to `ebs_vol_snapshot_id`
+* The `min_adjustment_magnitude` parameter for SimpleScaling policies has
+been retired.
+
+#### IMPROVEMENTS / NEW FEATURES:
+* Conditional support for the following parameters:
+ * `associate_public_ip_address`
+ * `default_cooldown`
+ * `desired_capacity`
+ * `ebs_vol_encrypted`
+ * `ebs_vol_size`
+ * `enabled_metrics`
+ * `enable_monitring`
+ * `force_delete`
+ * `instance_profile`
+ * `key_name`
+ * `placement_group`
+ * `protect_from_scale_in`
+ * `suspended_processes`
+ * `termination_policies`
+ * `root_vol_size`
+ * `spot_price`
+ * `user_data`
+* Support for specifying multiple security groups in addition to the one
+created by the module using the `security_groups` parameter.
+* Support for `io1` root & EBS volumes.
+* Support for EBS volume not not originating from a snapshot.
+* Added `managed_by=terraform` tag to ASG managed instances.
+* Instance `Name` tags can now be based on the instance-id by setting the
+`instance_based_naming_enabled` parameter to **true**.
+* Support for an arbitrary number of tags to be applied to each instance.
+
+#### BUG FIXES:
+* Fixed inconsistent tagging between `asg` and `asg_elb` resources
 
 ## 0.2.0 (May 16, 2016)
 
@@ -31,7 +74,8 @@ Be sure to declare your own egress rule when using the module (see [here](https:
 ## 0.1.2 (Apr 27, 2016)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
-* Changed the default value for `ebs_optimized` from `true` -> `false`. This setting is more compatible with the majority of instance types.
+* Changed the default value for `ebs_optimized` from `true` -> `false`. This
+setting is more compatible with the majority of instance types.
 
 #### IMPROVEMENTS:
 * Name for `aws_launch_configuration`.

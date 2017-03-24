@@ -1,11 +1,11 @@
 # Input Variables
 
 ## Resource tags
-variable "stack_item_label" {
+variable "stack_item_fullname" {
   type = "string"
 }
 
-variable "stack_item_fullname" {
+variable "stack_item_label" {
   type = "string"
 }
 
@@ -15,31 +15,11 @@ variable "vpc_id" {
 }
 
 ## LC parameters
-variable "ami" {
-  type = "string"
-}
-
-variable "instance_type" {
-  type = "string"
-}
-
-variable "instance_profile" {
-  type = "string"
-}
-
-variable "key_name" {
-  type = "string"
-}
-
 variable "associate_public_ip_address" {
   type = "string"
 }
 
-variable "user_data" {
-  type = "string"
-}
-
-variable "enable_monitoring" {
+variable "ami" {
   type = "string"
 }
 
@@ -47,15 +27,27 @@ variable "ebs_optimized" {
   type = "string"
 }
 
-variable "placement_tenancy" {
+variable "ebs_vol_del_on_term" {
   type = "string"
 }
 
-variable "root_vol_type" {
+variable "ebs_vol_device_name" {
   type = "string"
 }
 
-variable "root_vol_del_on_term" {
+variable "ebs_vol_encrypted" {
+  type = "string"
+}
+
+variable "ebs_vol_snapshot_id" {
+  type = "string"
+}
+
+variable "ebs_vol_iops" {
+  type = "string"
+}
+
+variable "ebs_vol_size" {
   type = "string"
 }
 
@@ -63,14 +55,50 @@ variable "ebs_vol_type" {
   type = "string"
 }
 
-variable "ebs_device_name" {
+variable "enable_monitoring" {
   type = "string"
 }
 
-variable "ebs_snapshot_id" {
+variable "instance_profile" {
   type = "string"
 }
 
-variable "ebs_vol_del_on_term" {
+variable "instance_type" {
+  type = "string"
+}
+
+variable "key_name" {
+  type = "string"
+}
+
+variable "placement_tenancy" {
+  type = "string"
+}
+
+variable "root_vol_del_on_term" {
+  type = "string"
+}
+
+variable "root_vol_iops" {
+  type = "string"
+}
+
+variable "root_vol_size" {
+  type = "string"
+}
+
+variable "root_vol_type" {
+  type = "string"
+}
+
+variable "security_groups" {
+  type = "list"
+}
+
+variable "spot_price" {
+  type = "string"
+}
+
+variable "user_data" {
   type = "string"
 }

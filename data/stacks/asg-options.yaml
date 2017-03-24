@@ -1,0 +1,33 @@
+---
+# Basic ASG options example
+
+## Module
+asg-options::module: 'examples/basic'
+
+## State storage
+asg-options::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-asg/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::basic::vars:
+  # LC parameters
+  associate_public_ip_address: 'true'
+  enable_monitoring: 'true'
+  key_name: 'unifio_ops_pub'
+  security_groups: 'sg-d4f906bd'
+
+  # ASG parameters
+  default_cooldown: '400'
+  desired_capacity: '2'
+  enabled_metrics: 'GroupTotalInstances,GroupMinSize,GroupMaxSize'
+  force_delete: 'true'
+  hc_grace_period: '400'
+  max_size: '3'
+  protect_from_scale_in: 'true'
+  suspended_processes: 'ScheduledActions,AddToLoadBalancer'
+  termination_policies: 'OldestInstance'
+
+  # TODO: Add test for placement group

@@ -5,87 +5,14 @@ provider "aws" {
   region = "${var.region}"
 }
 
-provider "atlas" {}
-
-## Sources inputs from VPC remote state
-resource "terraform_remote_state" "vpc" {
-  backend = "atlas"
-
-  config {
-    name = "${var.vpc_stack_name}"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-## Creates IAM role
-resource "aws_iam_role" "role" {
-  name = "${var.stack_item_label}-${var.region}"
-  path = "/"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "sts:AssumeRole",
-      "Principal": {
-         "Service": "ec2.amazonaws.com"
-      }
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_instance_profile" "instance_profile" {
-  name  = "${var.stack_item_label}-${var.region}"
-  roles = ["${aws_iam_role.role.name}"]
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_iam_role_policy" "policy_monitoring" {
-  name = "monitoring"
-  role = "${aws_iam_role.role.id}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "logs:*"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-EOF
-}
-
 ## Adds security group rules
 resource "aws_security_group_rule" "sg_asg_egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = -1
   cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 0
+  protocol          = -1
   security_group_id = "${module.example.sg_id}"
+  to_port           = 0
+  type              = "egress"
 
   lifecycle {
     create_before_destroy = true
@@ -93,27 +20,12 @@ resource "aws_security_group_rule" "sg_asg_egress" {
 }
 
 resource "aws_security_group_rule" "sg_asg_ssh" {
-  type              = "ingress"
+  cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 22
-  to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["${terraform_remote_state.vpc.output.lan_access_cidr}"]
   security_group_id = "${module.example.sg_id}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-## Generates instance user data from a template
-resource "template_file" "user_data" {
-  template = "${file("../templates/user_data.tpl")}"
-
-  vars {
-    hostname = "${var.stack_item_label}"
-    domain   = "example.org"
-    region   = "${var.region}"
-  }
+  to_port           = 22
+  type              = "ingress"
 
   lifecycle {
     create_before_destroy = true
@@ -127,23 +39,32 @@ module "example" {
   source = "../../group"
 
   # Resource tags
-  stack_item_label    = "${var.stack_item_label}"
   stack_item_fullname = "${var.stack_item_fullname}"
+  stack_item_label    = "${var.stack_item_label}"
 
   # VPC parameters
-  vpc_id  = "${terraform_remote_state.vpc.output.vpc_id}"
-  subnets = "${terraform_remote_state.vpc.output.lan_subnet_ids}"
-  region  = "${var.region}"
+  subnets = ["${split(",",var.subnets)}"]
+  vpc_id  = "${var.vpc_id}"
 
   # LC parameters
-  ami              = "${var.ami}"
-  instance_type    = "${var.instance_type}"
-  instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
-  user_data        = "${template_file.user_data.rendered}"
-  key_name         = "${var.key_name}"
-  ebs_snapshot_id  = "expl-snap"
+  ami                         = "${var.ami}"
+  associate_public_ip_address = "${var.associate_public_ip_address}"
+  enable_monitoring           = "${var.enable_monitoring}"
+  instance_type               = "${var.instance_type}"
+  key_name                    = "${var.key_name}"
+  security_groups             = ["${split(",",var.security_groups)}"]
+  spot_price                  = "${var.spot_price}"
 
   # ASG parameters
-  max_size = 1
-  min_size = 1
+  default_cooldown          = "${var.default_cooldown}"
+  desired_capacity          = "${var.desired_capacity}"
+  enabled_metrics           = ["${split(",",var.enabled_metrics)}"]
+  force_delete              = "${var.force_delete}"
+  hc_grace_period           = "${var.hc_grace_period}"
+  max_size                  = "${var.max_size}"
+  min_size                  = "${var.min_size}"
+  protect_from_scale_in     = "${var.protect_from_scale_in}"
+  suspended_processes       = ["${split(",",var.suspended_processes)}"]
+  termination_policies      = ["${split(",",var.termination_policies)}"]
+  wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
 }

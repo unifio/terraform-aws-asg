@@ -1,0 +1,28 @@
+---
+# Common resources
+
+## Basic example
+examples::basic::vars:
+  # Amazon Linux AMI 2016.09.1.20170119 x86_64 HVM GP2
+  ami: 'ami-c55673a0'
+  instance_type: 't2.nano'
+  min_size: '1'
+  region: "%{hiera('vpc_region')}"
+  stack_item_fullname: 'Basic Examples'
+  stack_item_label: 'bsc'
+  subnets: "%{hiera('vpc_subnets')}"
+  vpc_id: "%{hiera('vpc_id')}"
+
+## Advanced example
+examples::complete::vars:
+  # Amazon Linux AMI 2016.09.1.20170119 x86_64 HVM GP2
+  ami: 'ami-c55673a0'
+  enable_monitoring: 'true'
+  instance_type: 't2.nano'
+  key_name: 'unifio_ops_pub'
+  min_size: '1'
+  region: "%{hiera('vpc_region')}"
+  stack_item_fullname: 'Complete Examples'
+  stack_item_label: 'cmpl'
+  subnets: "%{hiera('vpc_subnets')}"
+  vpc_id: "%{hiera('vpc_id')}"

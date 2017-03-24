@@ -1,0 +1,8 @@
+{
+  "editor.renderWhitespace": "all",
+  "files.associations": {
+    "*.tpl": "hcl"
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}

@@ -1,0 +1,11 @@
+---
+# Global variables
+
+## Terraform
+tf_state_bucket: 'unifio-terraform-state'
+tf_state_region: 'us-east-2'
+
+## VPC
+vpc_id: 'vpc-0f986c66'
+vpc_region: 'us-east-2'
+vpc_subnets: 'subnet-3315e85a,subnet-3bbaaf43,subnet-ec1326a6'

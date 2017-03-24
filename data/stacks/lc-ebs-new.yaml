@@ -1,0 +1,25 @@
+---
+# Advanced LC new EBS example
+
+## Module
+lc-ebs-new::module: 'examples/complete'
+
+## State storage
+lc-ebs-new::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-asg/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::complete::vars:
+  # LC parameters
+  ebs_vol_device_name: '/dev/xvdb'
+  ebs_vol_encrypted: 'true'
+  ebs_vol_size: '1'
+  root_vol_size: '10'
+
+  # ASG parameters
+  max_size: '1'
+
+  # TODO: Add test for io1 ebs volume

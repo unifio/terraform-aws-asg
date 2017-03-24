@@ -1,0 +1,29 @@
+---
+# Advanced ASG ELB example
+
+## Module
+asg-elb::module: 'examples/complete'
+
+## State storage
+asg-elb::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-asg/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::complete::vars:
+  # Resource tags
+  env_tag: 'example'
+  team_tag: 'engineering'
+
+  # LC parameters
+  ebs_vol_device_name: '/dev/xvdb'
+  ## amzn-ami-minimal-hvm-2016.03.3.x86_64
+  ebs_vol_snapshot_id: 'snap-08b95a31adefd036f'
+  instance_based_naming_enabled: 'true'
+  instance_name_prefix: 'example'
+
+  # ASG parameters
+  max_size: '2'
+  min_elb_capacity: '1'

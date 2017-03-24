@@ -1,0 +1,17 @@
+---
+# Basic defaults example
+
+## Module
+defaults::module: 'examples/basic'
+
+## State storage
+defaults::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-asg/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::basic::vars:
+  # ASG parameters
+  max_size: '1'
