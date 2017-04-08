@@ -149,7 +149,7 @@ resource "aws_security_group_rule" "sg_asg_elb" {
 
 ## Generates instance user data from a template
 data "template_file" "user_data" {
-  template = "${file("${path.module}/../templates/user_data.tpl")}"
+  template = "${file("${path.module}/user_data.tpl")}"
 }
 
 ## Provisions basic autoscaling group
