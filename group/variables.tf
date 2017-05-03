@@ -172,9 +172,9 @@ variable "security_groups" {
 
 ## Ease transition from legacy ASG module refactors
 
-variable "sg_name_prefix" {
+variable "asg_name_prefix" {
   type        = "string"
-  description = "A prefix for the security group name."
+  description = "A prefix for the asg/lc stack_item_label."
   default     = ""
 }
 

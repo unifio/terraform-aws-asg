@@ -85,12 +85,11 @@ module "lc" {
   root_vol_size               = "${var.root_vol_size}"
   root_vol_type               = "${var.root_vol_type}"
   security_groups             = ["${var.security_groups}"]
-  sg_name_prefix = "${var.sg_name_prefix}"
-  sg_name_suffix = "${var.sg_name_suffix}"
-  sg_tag_name_suffix = "${var.sg_tag_name_suffix}"
+  asg_name_prefix             = "${var.asg_name_prefix}"
+  sg_name_suffix              = "${var.sg_name_suffix}"
+  sg_tag_name_suffix          = "${var.sg_tag_name_suffix}"
   spot_price                  = "${var.spot_price}"
   user_data                   = "${data.template_cloudinit_config.cloud_config.rendered}"
-
 }
 
 ## Creates auto scaling group
@@ -100,6 +99,7 @@ module "asg" {
   ### Resource tags
   stack_item_label    = "${var.stack_item_label}"
   stack_item_fullname = "${var.stack_item_fullname}"
+  asg_name_prefix     = "${var.asg_name_prefix}"
 
   ### VPC parameters
   subnets = ["${var.subnets}"]

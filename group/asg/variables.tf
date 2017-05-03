@@ -20,6 +20,10 @@ variable "lc_id" {
 }
 
 ## ASG parameters
+variable "asg_name_prefix" {
+  type = "string"
+}
+
 variable "default_cooldown" {
   type = "string"
 }

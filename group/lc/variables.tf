@@ -97,7 +97,7 @@ variable "security_groups" {
 
 ## Ease transition from legacy ASG module refactors
 
-variable "sg_name_prefix" {
+variable "asg_name_prefix" {
   type = "string"
 }
 

@@ -14,7 +14,7 @@ resource "aws_autoscaling_group" "asg" {
   max_size                  = "${var.max_size}"
   metrics_granularity       = "${var.metrics_granularity}"
   min_size                  = "${var.min_size}"
-  name                      = "${var.stack_item_label}"
+  name                      = "${var.asg_name_prefix}${var.stack_item_label}"
   placement_group           = "${var.placement_group}"
   protect_from_scale_in     = "${var.protect_from_scale_in}"
   suspended_processes       = ["${compact(var.suspended_processes)}"]
@@ -31,7 +31,7 @@ resource "aws_autoscaling_group" "asg" {
 
   tag {
     key                 = "Name"
-    value               = "${var.stack_item_label}"
+    value               = "${var.asg_name_prefix}${var.stack_item_label}"
     propagate_at_launch = true
   }
 
@@ -57,7 +57,7 @@ resource "aws_autoscaling_group" "asg_elb" {
   metrics_granularity       = "${var.metrics_granularity}"
   min_elb_capacity          = "${length(var.min_elb_capacity) > 0 ? var.min_elb_capacity : "0"}"
   min_size                  = "${var.min_size}"
-  name                      = "${var.stack_item_label}"
+  name                      = "${var.asg_name_prefix}${var.stack_item_label}"
   placement_group           = "${var.placement_group}"
   protect_from_scale_in     = "${var.protect_from_scale_in}"
   suspended_processes       = ["${compact(var.suspended_processes)}"]
@@ -75,7 +75,7 @@ resource "aws_autoscaling_group" "asg_elb" {
 
   tag {
     key                 = "Name"
-    value               = "${var.stack_item_label}"
+    value               = "${var.asg_name_prefix}${var.stack_item_label}"
     propagate_at_launch = true
   }
 
