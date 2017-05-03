@@ -170,6 +170,26 @@ variable "security_groups" {
   default     = []
 }
 
+## Ease transition from legacy ASG module refactors
+
+variable "sg_name_prefix" {
+  type        = "string"
+  description = "A prefix for the security group name."
+  default     = ""
+}
+
+variable "sg_name_suffix" {
+  type        = "string"
+  description = "A suffix to append to the name_prefix in the security group."
+  default     = "-asg-"
+}
+
+variable "sg_tag_name_suffix" {
+  type        = "string"
+  description = "A suffix to append to the name tag in the security group."
+  default     = "-asg"
+}
+
 variable "spot_price" {
   type        = "string"
   description = "The price to use for reserving spot instances."

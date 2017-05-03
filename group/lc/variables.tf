@@ -98,18 +98,15 @@ variable "security_groups" {
 ## Ease transition from legacy ASG module refactors
 
 variable "sg_name_prefix" {
-  type    = "string"
-  default = ""
+  type = "string"
 }
 
 variable "sg_name_suffix" {
-  type    = "string"
-  default = "-asg-"
+  type = "string"
 }
 
 variable "sg_tag_name_suffix" {
-  type    = "string"
-  default = "-asg"
+  type = "string"
 }
 
 variable "spot_price" {
