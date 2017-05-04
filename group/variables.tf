@@ -11,6 +11,18 @@ variable "stack_item_label" {
   description = "Short form identifier for this stack. This value is used to create the 'Name' resource tag for resources created by this stack item, and also serves as a unique key for re-use."
 }
 
+variable "asg_name_override" {
+  type        = "string"
+  description = "A string to override the ASG name"
+  default     = ""
+}
+
+variable "lc_sg_name_prefix_override" {
+  type        = "string"
+  description = "A string to override the ASG name"
+  default     = ""
+}
+
 ## VPC parameters
 variable "subnets" {
   type        = "list"
@@ -168,26 +180,6 @@ variable "security_groups" {
   type        = "list"
   description = "A list of associated security group IDs"
   default     = []
-}
-
-## Ease transition from legacy ASG module refactors
-
-variable "asg_name_prefix" {
-  type        = "string"
-  description = "A prefix for the asg/lc stack_item_label."
-  default     = ""
-}
-
-variable "sg_name_suffix" {
-  type        = "string"
-  description = "A suffix to append to the name_prefix in the security group."
-  default     = "-asg-"
-}
-
-variable "sg_tag_name_suffix" {
-  type        = "string"
-  description = "A suffix to append to the name tag in the security group."
-  default     = "-asg"
 }
 
 variable "spot_price" {

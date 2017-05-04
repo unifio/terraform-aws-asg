@@ -9,6 +9,11 @@ variable "stack_item_label" {
   type = "string"
 }
 
+## Allow override of resource naming
+variable "lc_sg_name_prefix_override" {
+  type = "string"
+}
+
 ## VPC parameters
 variable "vpc_id" {
   type = "string"
@@ -93,20 +98,6 @@ variable "root_vol_type" {
 
 variable "security_groups" {
   type = "list"
-}
-
-## Ease transition from legacy ASG module refactors
-
-variable "asg_name_prefix" {
-  type = "string"
-}
-
-variable "sg_name_suffix" {
-  type = "string"
-}
-
-variable "sg_tag_name_suffix" {
-  type = "string"
 }
 
 variable "spot_price" {

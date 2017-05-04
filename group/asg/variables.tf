@@ -9,6 +9,11 @@ variable "stack_item_label" {
   type = "string"
 }
 
+## Allow override of resource naming
+variable "asg_name_override" {
+  type = "string"
+}
+
 ## VPC parameters
 variable "subnets" {
   type = "list"
@@ -20,9 +25,6 @@ variable "lc_id" {
 }
 
 ## ASG parameters
-variable "asg_name_prefix" {
-  type = "string"
-}
 
 variable "default_cooldown" {
   type = "string"

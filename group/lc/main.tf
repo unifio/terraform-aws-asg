@@ -3,13 +3,13 @@
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
   description = "${var.stack_item_fullname} security group"
-  name_prefix = "${var.stack_item_label}${var.sg_name_suffix}"
+  name_prefix = "${length(var.lc_sg_name_prefix_override) > 0 ? format("%s-", var.lc_sg_name_prefix_override) : format("%s-asg-", var.stack_item_label)}"
   vpc_id      = "${var.vpc_id}"
 
   tags {
     application = "${var.stack_item_fullname}"
     managed_by  = "terraform"
-    Name        = "${var.stack_item_label}${var.sg_tag_name_suffix}"
+    Name        = "${length(var.lc_sg_name_prefix_override) > 0 ? var.lc_sg_name_prefix_override : format("%s-asg", var.stack_item_label)}"
   }
 
   lifecycle {
