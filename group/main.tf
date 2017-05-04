@@ -58,8 +58,9 @@ module "lc" {
   source = "lc"
 
   ### Resource labels
-  stack_item_fullname = "${var.stack_item_fullname}"
-  stack_item_label    = "${var.stack_item_label}"
+  stack_item_fullname        = "${var.stack_item_fullname}"
+  stack_item_label           = "${var.stack_item_label}"
+  lc_sg_name_prefix_override = "${var.lc_sg_name_prefix_override}"
 
   ### VPC parameters
   vpc_id = "${var.vpc_id}"
@@ -96,6 +97,7 @@ module "asg" {
   ### Resource tags
   stack_item_label    = "${var.stack_item_label}"
   stack_item_fullname = "${var.stack_item_fullname}"
+  asg_name_override   = "${var.asg_name_override}"
 
   ### VPC parameters
   subnets = ["${var.subnets}"]

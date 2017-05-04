@@ -11,6 +11,18 @@ variable "stack_item_label" {
   description = "Short form identifier for this stack. This value is used to create the 'Name' resource tag for resources created by this stack item, and also serves as a unique key for re-use."
 }
 
+variable "asg_name_override" {
+  type        = "string"
+  description = "A string to override the ASG name"
+  default     = ""
+}
+
+variable "lc_sg_name_prefix_override" {
+  type        = "string"
+  description = "A string to override the ASG name"
+  default     = ""
+}
+
 ## VPC parameters
 variable "subnets" {
   type        = "list"

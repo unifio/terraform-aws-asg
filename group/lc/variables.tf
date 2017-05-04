@@ -9,6 +9,11 @@ variable "stack_item_label" {
   type = "string"
 }
 
+## Allow override of resource naming
+variable "lc_sg_name_prefix_override" {
+  type = "string"
+}
+
 ## VPC parameters
 variable "vpc_id" {
   type = "string"
