@@ -100,7 +100,7 @@ module "asg" {
   asg_name_override   = "${var.asg_name_override}"
 
   ### VPC parameters
-  subnets = ["${var.subnets}"]
+  subnets = "${var.subnets}"
 
   ### LC parameters
   lc_id = "${module.lc.lc_id}"
