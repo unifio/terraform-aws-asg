@@ -175,7 +175,7 @@ module "asg" {
   instance_type                 = "m4.large"
   key_name                      = "ops"
   security_groups               = "sg-c1afc0a8,sg-d4f906bd"
-  spot price                    = "0.010"
+  spot_price                    = "0.010"
   user_data                     = "${template_file.user_data.rendered}"
 
   # ASG parameters
