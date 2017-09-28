@@ -78,6 +78,11 @@ variable "threshold" {
   description = "The value against which the specified statistic is compared."
 }
 
+variable "treat_missing_data" {
+  type        = "string"
+  description = "See http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-missing-data"
+}
+
 variable "valid_statistics" {
   type = "map"
 
