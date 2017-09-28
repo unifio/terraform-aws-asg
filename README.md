@@ -324,7 +324,7 @@ module "absolute_policy" {
   period              = 120
   scaling_adjustment  = 4
   threshold           = 10
-  treat_missing_data  = "bad"
+  treat_missing_data  = "breaching"
 }
 ```
 
@@ -349,7 +349,7 @@ module "percentage_policy" {
   period                   = 120
   scaling_adjustment       = 4
   threshold                = 10
-  treat_missing_data       = "bad"
+  treat_missing_data       = "breaching"
 }
 ```
 
