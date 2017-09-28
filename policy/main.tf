@@ -46,4 +46,5 @@ resource "aws_cloudwatch_metric_alarm" "monitor_asg" {
   period             = "${var.period}"
   statistic          = "${lookup(var.valid_statistics, var.statistic)}"
   threshold          = "${var.threshold}"
+  treat_missing_data = "${var.treat_missing_data}"
 }
