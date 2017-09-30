@@ -80,7 +80,19 @@ variable "threshold" {
 
 variable "treat_missing_data" {
   type        = "string"
-  description = "See http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-missing-data"
+  description = "You can specfy how alarms handle missing data points. Valid values are 'missing': the alarm looks back farther in time to find additional data points, 'notBreaching': treated as a data point that is within the threshold, 'breaching': treated as a data point that is breaching the threshold, 'ignore': the current alarm state is maintained."
+  default     = "missing"
+}
+
+variable "valid_missing_data" {
+  type = "map"
+
+  default = {
+    missing      = "missing"
+    ignore       = "ignore"
+    breaching    = "breaching"
+    notBreaching = "notBreaching"
+  }
 }
 
 variable "valid_statistics" {
