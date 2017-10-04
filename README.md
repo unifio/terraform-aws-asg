@@ -165,7 +165,7 @@ module "asg" {
 
   # VPC parameters
   region  = "us-east-1"
-  subnets = "subnet-3315e85a,subnet-3bbaaf43,subnet-ec1326a6"
+  subnets = ["subnet-3315e85a","subnet-3bbaaf43","subnet-ec1326a6"]
   vpc_id  = "vpc-0f986c66"
 
   # LC parameters
@@ -206,7 +206,7 @@ module "asg" {
 
   # VPC parameters
   region  = "us-east-1"
-  subnets = "subnet-3315e85a,subnet-3bbaaf43,subnet-ec1326a6"
+  subnets = ["subnet-3315e85a","subnet-3bbaaf43","subnet-ec1326a6"]
   vpc_id  = "vpc-0f986c66"
 
   # LC parameters
