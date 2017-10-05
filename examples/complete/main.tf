@@ -216,4 +216,5 @@ module "scale_up_policy" {
   period              = 120
   scaling_adjustment  = 30
   threshold           = 10
+  treat_missing_data  = "breaching"
 }

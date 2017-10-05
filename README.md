@@ -290,6 +290,12 @@ applied.
 associated metric. Valid values are **SampleCount**, **Average**, **Sum**,
 **Minimum** and **Maximum**.
 * `threshold` - The value against which the specified statistic is compared.
+* [`treat_missing_data`](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-missing-data) - (Default: **missing**) How alarms handle missing
+data points. Valid values are:
+  * **missing** - Missing (the alarm looks back farther in time to find additional data points)
+  * **ignore** - Good ("Not Breaching," treated as a data point that is within the threshold)
+  * **breaching** - Bad ("Breaching," treated as a data point that is breaching the threshold)
+  * **notBreaching** - Ignored (the current alarm state is maintained)
 
 ### Usage
 
@@ -324,6 +330,7 @@ module "absolute_policy" {
   period              = 120
   scaling_adjustment  = 4
   threshold           = 10
+  treat_missing_data  = "breaching"
 }
 ```
 
@@ -348,6 +355,7 @@ module "percentage_policy" {
   period                   = 120
   scaling_adjustment       = 4
   threshold                = 10
+  treat_missing_data       = "breaching"
 }
 ```
 
