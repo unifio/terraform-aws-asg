@@ -37,7 +37,7 @@ COVALENCE_CONFIG=${COVALENCE_CONFIG:-"covalence.yaml"}
 # Environments to be included in CI
 COVALENCE_TEST_ENVS=${COVALENCE_TEST_ENVS:-}
 # The Container image to use for the ci defaults to unifio/ci latest
-DOCKER_IMAGE_NAME=${DOCKER_IMAGE_NAME:-"unifio/ci"}
+DOCKER_IMAGE_NAME=${DOCKER_IMAGE_NAME:-"unifio/ci:2.0.73"}
 # Enable debugging of script
 S_DEBUG=${S_DEBUG:-}
 # Dump verbose information about commands without executing them.
