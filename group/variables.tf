@@ -26,7 +26,7 @@ variable "lc_sg_name_prefix_override" {
 variable "propagate_name_at_launch" {
   type        = "string"
   description = "A string to override the ASG name"
-  default     = "false"
+  default     = "true"
 }
 
 ## VPC parameters
