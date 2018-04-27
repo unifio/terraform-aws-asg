@@ -14,6 +14,11 @@ variable "asg_name_override" {
   type = "string"
 }
 
+variable "propagate_name_at_launch" {
+  type    = "string"
+  default = "true"
+}
+
 ## VPC parameters
 variable "subnets" {
   type = "list"
