@@ -1,0 +1,57 @@
+common: &common
+  working_directory: ~/repo
+
+  docker:
+    - image: unifio/ci:3.0.551-ruby-2.5.1
+
+  environment:
+    AWS_REGION: 'us-east-2'
+    TF_PLUGIN_CACHE_DIR: '/root/.terraform.d/plugin-cache'
+
+version: 2
+
+jobs:
+  build:
+    <<: *common
+
+    steps:
+      - checkout
+
+      - run:
+          name: Verify
+          environment:
+            CI_REPORTS: 'reports'
+            COVALENCE_TEST_ENVS: 'basic,complete'
+          command: |
+            mkdir reports
+            bundle exec rake ci
+      - store_test_results:
+          path: reports
+
+      - run:
+          name: Basic
+          command: |
+            bundle exec rake basic:defaults:apply
+            ## TODO: Currently need to run this twice to account for a race condition in LC updates
+            bundle exec rake basic:lc-options:apply || true
+            bundle exec rake basic:lc-options:apply
+            bundle exec rake basic:asg-options:apply
+            bundle exec rake basic:asg-options:destroy
+
+      - run:
+          name: Complete
+          command: |
+            bundle exec rake complete:lc-ebs-new:apply
+            ## TODO: Currently need to run this twice to account for a race condition in LC updates
+            bundle exec rake complete:lc-ebs-snap:apply || true
+            bundle exec rake complete:lc-ebs-snap:apply
+            bundle exec rake complete:lc-ebs-snap:destroy
+            bundle exec rake complete:asg-elb:apply
+            bundle exec rake complete:asg-elb-wait:apply
+            bundle exec rake complete:asg-elb-wait:destroy
+
+experimental:
+  notify:
+    branches:
+      only:
+        - master
