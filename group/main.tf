@@ -6,9 +6,7 @@ terraform {
 }
 
 ## Creates cloudconfig fragments for tagging
-data "aws_region" "current" {
-  current = true
-}
+data "aws_region" "current" {}
 
 data "template_file" "name" {
   template = "${var.instance_based_naming_enabled == "true" ? file("${path.module}/templates/name.tpl") : ""}"

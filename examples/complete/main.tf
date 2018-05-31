@@ -47,8 +47,8 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
-  name  = "${var.stack_item_label}-${var.region}"
-  roles = ["${aws_iam_role.role.name}"]
+  name = "${var.stack_item_label}-${var.region}"
+  role = "${aws_iam_role.role.name}"
 
   lifecycle {
     create_before_destroy = true
