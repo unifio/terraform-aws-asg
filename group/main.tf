@@ -95,9 +95,10 @@ module "asg" {
   source = "asg"
 
   ### Resource tags
-  stack_item_label    = "${var.stack_item_label}"
-  stack_item_fullname = "${var.stack_item_fullname}"
-  asg_name_override   = "${var.asg_name_override}"
+  stack_item_label         = "${var.stack_item_label}"
+  stack_item_fullname      = "${var.stack_item_fullname}"
+  asg_name_override        = "${var.asg_name_override}"
+  propagate_name_at_launch = "${var.propagate_name_at_launch}"
 
   ### VPC parameters
   subnets = ["${var.subnets}"]

@@ -32,7 +32,7 @@ resource "aws_autoscaling_group" "asg" {
   tag {
     key                 = "Name"
     value               = "${length(var.asg_name_override) > 0 ? var.asg_name_override : var.stack_item_label}"
-    propagate_at_launch = true
+    propagate_at_launch = "${var.propagate_name_at_launch}"
   }
 
   tag {
@@ -76,7 +76,7 @@ resource "aws_autoscaling_group" "asg_elb" {
   tag {
     key                 = "Name"
     value               = "${length(var.asg_name_override) > 0 ? var.asg_name_override : var.stack_item_label}"
-    propagate_at_launch = true
+    propagate_at_launch = "${var.propagate_name_at_launch}"
   }
 
   tag {

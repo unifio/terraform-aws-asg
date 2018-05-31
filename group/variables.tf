@@ -23,6 +23,12 @@ variable "lc_sg_name_prefix_override" {
   default     = ""
 }
 
+variable "propagate_name_at_launch" {
+  type        = "string"
+  description = "A string to override the ASG name"
+  default     = "true"
+}
+
 ## VPC parameters
 variable "subnets" {
   type        = "list"
