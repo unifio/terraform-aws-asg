@@ -201,6 +201,12 @@ variable "user_data" {
 }
 
 ## ASG parameters
+variable "additional_asg_tags" {
+  type        = "list"
+  description = "Additional tags to apply at the ASG level, if any"
+  default     = []
+}
+
 variable "default_cooldown" {
   type        = "string"
   description = "The amount of time, in seconds, after a scaling activity completes before another scaling activity can start."
