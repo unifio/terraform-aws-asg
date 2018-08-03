@@ -1,6 +1,26 @@
 # AWS Auto Scaling Group
 
 ## Creates auto scaling group
+locals {
+  default_asg_tags = [
+    {
+      key                 = "application"
+      value               = "${var.stack_item_fullname}"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Name"
+      value               = "${length(var.asg_name_override) > 0 ? var.asg_name_override : var.stack_item_label}"
+      propagate_at_launch = "${var.propagate_name_at_launch}"
+    },
+    {
+      key                 = "managed_by"
+      value               = "terraform"
+      propagate_at_launch = true
+    },
+  ]
+}
+
 resource "aws_autoscaling_group" "asg" {
   count = "${length(var.min_elb_capacity) > 0 || length(var.wait_for_elb_capacity) > 0 ? 0 : 1}"
 
@@ -23,23 +43,7 @@ resource "aws_autoscaling_group" "asg" {
   vpc_zone_identifier       = ["${compact(var.subnets)}"]
   wait_for_capacity_timeout = "${length(var.wait_for_capacity_timeout) > 0 ? var.wait_for_capacity_timeout : "10m"}"
 
-  tag {
-    key                 = "application"
-    value               = "${var.stack_item_fullname}"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "Name"
-    value               = "${length(var.asg_name_override) > 0 ? var.asg_name_override : var.stack_item_label}"
-    propagate_at_launch = "${var.propagate_name_at_launch}"
-  }
-
-  tag {
-    key                 = "managed_by"
-    value               = "terraform"
-    propagate_at_launch = true
-  }
+  tags = "${concat(local.default_asg_tags, var.additional_asg_tags)}"
 }
 
 resource "aws_autoscaling_group" "asg_elb" {
@@ -67,21 +71,5 @@ resource "aws_autoscaling_group" "asg_elb" {
   wait_for_capacity_timeout = "${length(var.wait_for_capacity_timeout) > 0 ? var.wait_for_capacity_timeout : "10m"}"
   wait_for_elb_capacity     = "${length(var.wait_for_elb_capacity) > 0 ? var.wait_for_elb_capacity : "0"}"
 
-  tag {
-    key                 = "application"
-    value               = "${var.stack_item_fullname}"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "Name"
-    value               = "${length(var.asg_name_override) > 0 ? var.asg_name_override : var.stack_item_label}"
-    propagate_at_launch = "${var.propagate_name_at_launch}"
-  }
-
-  tag {
-    key                 = "managed_by"
-    value               = "terraform"
-    propagate_at_launch = true
-  }
+  tags = "${concat(local.default_asg_tags, var.additional_asg_tags)}"
 }

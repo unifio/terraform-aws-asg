@@ -119,6 +119,7 @@ module "asg" {
   suspended_processes       = ["${var.suspended_processes}"]
   termination_policies      = ["${var.termination_policies}"]
   wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
+  additional_asg_tags       = "${var.additional_asg_tags}"
 
   ### ELB parameters
   load_balancers        = ["${var.load_balancers}"]

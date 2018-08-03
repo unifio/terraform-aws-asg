@@ -9,6 +9,11 @@ variable "stack_item_label" {
   type = "string"
 }
 
+variable "additional_asg_tags" {
+  type    = "list"
+  default = []
+}
+
 ## Allow override of resource naming
 variable "asg_name_override" {
   type = "string"
