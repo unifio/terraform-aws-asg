@@ -2,115 +2,116 @@
 
 ## Resource tags
 variable "stack_item_label" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_fullname" {
-  type = "string"
+  type = string
 }
 
 variable "env_tag" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "team_tag" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 ## VPC parameters
 variable "vpc_id" {
-  type = "string"
+  type = string
 }
 
 variable "region" {
-  type = "string"
+  type = string
 }
 
 variable "subnets" {
-  type = "string"
+  type = string
 }
 
 ## LC parameters
 variable "ami" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_device_name" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_encrypted" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "ebs_vol_size" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "ebs_vol_snapshot_id" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "enable_monitoring" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "instance_based_naming_enabled" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "instance_name_prefix" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "instance_type" {
-  type = "string"
+  type = string
 }
 
 variable "key_name" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "root_vol_size" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 ## ASG parameters
 variable "desired_capacity" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "max_size" {
-  type = "string"
+  type = string
 }
 
 variable "min_elb_capacity" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "min_size" {
-  type = "string"
+  type = string
 }
 
 variable "wait_for_elb_capacity" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 ## ELB parameters
 variable "internal" {
-  type    = "string"
+  type    = string
   default = "true"
 }
+

@@ -2,7 +2,7 @@
 
 ## Configures providers
 provider "aws" {
-  region = "${var.region}"
+  region = var.region
 }
 
 ## Creates IAM role
@@ -26,11 +26,12 @@ resource "aws_iam_role" "role" {
   }]
 }
 EOF
+
 }
 
 resource "aws_iam_role_policy" "policy_tagging" {
   name = "tagging"
-  role = "${aws_iam_role.role.id}"
+  role = aws_iam_role.role.id
 
   policy = <<EOF
 {
@@ -44,11 +45,12 @@ resource "aws_iam_role_policy" "policy_tagging" {
   }]
 }
 EOF
+
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "${var.stack_item_label}-${var.region}"
-  role = "${aws_iam_role.role.name}"
+  role = aws_iam_role.role.name
 
   lifecycle {
     create_before_destroy = true
@@ -59,10 +61,10 @@ resource "aws_iam_instance_profile" "instance_profile" {
 resource "aws_security_group" "sg_elb" {
   description = "${var.stack_item_fullname} security group"
   name_prefix = "${var.stack_item_label}-elb-"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
-  tags {
-    application = "${var.stack_item_fullname}"
+  tags = {
+    application = var.stack_item_fullname
     Name        = "${var.stack_item_label}-elb"
     managed_by  = "terraform"
   }
@@ -89,14 +91,14 @@ resource "aws_security_group" "sg_elb" {
 
 ## Creates ELB
 resource "aws_elb" "elb" {
-  internal        = "${var.internal}"
-  name            = "${var.stack_item_label}"
-  security_groups = ["${aws_security_group.sg_elb.id}"]
-  subnets         = ["${split(",",var.subnets)}"]
+  internal        = var.internal
+  name            = var.stack_item_label
+  security_groups = [aws_security_group.sg_elb.id]
+  subnets         = split(",", var.subnets)
 
-  tags {
-    application = "${var.stack_item_fullname}"
-    Name        = "${var.stack_item_label}"
+  tags = {
+    application = var.stack_item_fullname
+    Name        = var.stack_item_label
     managed_by  = "terraform"
   }
 
@@ -127,7 +129,7 @@ resource "aws_security_group_rule" "sg_asg_egress" {
   to_port           = 0
   protocol          = -1
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${module.example.sg_id}"
+  security_group_id = module.example.sg_id
 
   lifecycle {
     create_before_destroy = true
@@ -139,8 +141,8 @@ resource "aws_security_group_rule" "sg_asg_elb" {
   from_port                = 22
   to_port                  = 22
   protocol                 = "tcp"
-  source_security_group_id = "${aws_security_group.sg_elb.id}"
-  security_group_id        = "${module.example.sg_id}"
+  source_security_group_id = aws_security_group.sg_elb.id
+  security_group_id        = module.example.sg_id
 
   lifecycle {
     create_before_destroy = true
@@ -149,7 +151,7 @@ resource "aws_security_group_rule" "sg_asg_elb" {
 
 ## Generates instance user data from a template
 data "template_file" "user_data" {
-  template = "${file("${path.module}/user_data.tpl")}"
+  template = file("${path.module}/user_data.tpl")
 }
 
 ## Provisions basic autoscaling group
@@ -159,36 +161,39 @@ module "example" {
   source = "../../group"
 
   # Resource tags
-  stack_item_fullname = "${var.stack_item_fullname}"
-  stack_item_label    = "${var.stack_item_label}"
+  stack_item_fullname = var.stack_item_fullname
+  stack_item_label    = var.stack_item_label
 
   # VPC parameters
-  subnets = ["${split(",",var.subnets)}"]
-  vpc_id  = "${var.vpc_id}"
+  subnets = [split(",", var.subnets)]
+  vpc_id  = var.vpc_id
 
   # LC parameters
-  ami                           = "${var.ami}"
-  ebs_vol_device_name           = "${var.ebs_vol_device_name}"
-  ebs_vol_encrypted             = "${var.ebs_vol_encrypted}"
-  ebs_vol_size                  = "${var.ebs_vol_size}"
-  ebs_vol_snapshot_id           = "${var.ebs_vol_snapshot_id}"
-  enable_monitoring             = "${var.enable_monitoring}"
-  instance_based_naming_enabled = "${var.instance_based_naming_enabled}"
-  instance_name_prefix          = "${var.instance_name_prefix}"
-  instance_profile              = "${aws_iam_instance_profile.instance_profile.id}"
-  instance_tags                 = "${map("env","${var.env_tag}","team","${var.team_tag}")}"
-  instance_type                 = "${var.instance_type}"
-  key_name                      = "${var.key_name}"
-  root_vol_size                 = "${var.root_vol_size}"
-  user_data                     = "${data.template_file.user_data.rendered}"
+  ami                           = var.ami
+  ebs_vol_device_name           = var.ebs_vol_device_name
+  ebs_vol_encrypted             = var.ebs_vol_encrypted
+  ebs_vol_size                  = var.ebs_vol_size
+  ebs_vol_snapshot_id           = var.ebs_vol_snapshot_id
+  enable_monitoring             = var.enable_monitoring
+  instance_based_naming_enabled = var.instance_based_naming_enabled
+  instance_name_prefix          = var.instance_name_prefix
+  instance_profile              = aws_iam_instance_profile.instance_profile.id
+  instance_tags = {
+    "env"  = var.env_tag
+    "team" = var.team_tag
+  }
+  instance_type = var.instance_type
+  key_name      = var.key_name
+  root_vol_size = var.root_vol_size
+  user_data     = data.template_file.user_data.rendered
 
   # ASG parameters
-  desired_capacity      = "${var.desired_capacity}"
-  load_balancers        = ["${aws_elb.elb.id}"]
-  max_size              = "${var.max_size}"
-  min_elb_capacity      = "${var.min_elb_capacity}"
-  min_size              = "${var.min_size}"
-  wait_for_elb_capacity = "${var.wait_for_elb_capacity}"
+  desired_capacity      = var.desired_capacity
+  load_balancers        = [aws_elb.elb.id]
+  max_size              = var.max_size
+  min_elb_capacity      = var.min_elb_capacity
+  min_size              = var.min_size
+  wait_for_elb_capacity = var.wait_for_elb_capacity
 }
 
 ## Provisions autoscaling policies and associated resources
@@ -198,11 +203,11 @@ module "scale_up_policy" {
   source = "../../policy"
 
   # Resource tags
-  stack_item_fullname = "${var.stack_item_fullname}"
+  stack_item_fullname = var.stack_item_fullname
   stack_item_label    = "${var.stack_item_label}-up"
 
   # ASG parameters
-  asg_name = "${module.example.asg_name}"
+  asg_name = module.example.asg_name
 
   # Notification parameters
   notifications = ["autoscaling:EC2_INSTANCE_LAUNCH_ERROR", "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"]
@@ -218,3 +223,4 @@ module "scale_up_policy" {
   threshold           = 10
   treat_missing_data  = "breaching"
 }
+
