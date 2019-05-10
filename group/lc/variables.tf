@@ -22,6 +22,7 @@ variable "vpc_id" {
 ## LC parameters
 variable "associate_public_ip_address" {
   type = string
+  default = "false"
 }
 
 variable "ami" {

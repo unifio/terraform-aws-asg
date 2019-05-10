@@ -49,7 +49,7 @@ variable "ami" {
 variable "associate_public_ip_address" {
   type        = string
   description = "Flag for associating public IP addresses with instances managed by the auto scaling group."
-  default     = ""
+  default     = "false"
 }
 
 variable "ebs_optimized" {
