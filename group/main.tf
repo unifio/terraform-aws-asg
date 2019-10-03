@@ -53,7 +53,7 @@ data "template_cloudinit_config" "cloud_config" {
 
 ## Creates launch configuration & security group
 module "lc" {
-  source = "lc"
+  source = "./lc"
 
   ### Resource labels
   stack_item_fullname        = "${var.stack_item_fullname}"
@@ -90,7 +90,7 @@ module "lc" {
 
 ## Creates auto scaling group
 module "asg" {
-  source = "asg"
+  source = "./asg"
 
   ### Resource tags
   stack_item_label         = "${var.stack_item_label}"
