@@ -79,7 +79,7 @@ module "lc" {
   root_vol_iops               = var.root_vol_iops
   root_vol_size               = var.root_vol_size
   root_vol_type               = var.root_vol_type
-  security_groups             = [var.security_groups]
+  security_groups             = var.security_groups
   spot_price                  = var.spot_price
   user_data                   = data.template_cloudinit_config.cloud_config.rendered
 }
@@ -123,4 +123,3 @@ module "asg" {
   target_group_arns     = [var.target_group_arns]
   wait_for_elb_capacity = var.wait_for_elb_capacity
 }
-
