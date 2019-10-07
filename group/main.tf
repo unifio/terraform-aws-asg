@@ -103,7 +103,7 @@ module "asg" {
   ### ASG parameters
   default_cooldown          = var.default_cooldown
   desired_capacity          = var.desired_capacity
-  enabled_metrics           = [var.enabled_metrics]
+  enabled_metrics           = var.enabled_metrics
   force_delete              = var.force_delete
   hc_check_type             = var.hc_check_type
   hc_grace_period           = var.hc_grace_period
@@ -112,14 +112,14 @@ module "asg" {
   min_size                  = var.min_size
   placement_group           = var.placement_group
   protect_from_scale_in     = var.protect_from_scale_in
-  suspended_processes       = [var.suspended_processes]
-  termination_policies      = [var.termination_policies]
+  suspended_processes       = var.suspended_processes
+  termination_policies      = var.termination_policies
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
   additional_asg_tags       = var.additional_asg_tags
 
   ### ELB parameters
-  load_balancers        = [var.load_balancers]
+  load_balancers        = var.load_balancers
   min_elb_capacity      = var.min_elb_capacity
-  target_group_arns     = [var.target_group_arns]
+  target_group_arns     = var.target_group_arns
   wait_for_elb_capacity = var.wait_for_elb_capacity
 }
