@@ -95,7 +95,7 @@ module "asg" {
   propagate_name_at_launch = var.propagate_name_at_launch
 
   ### VPC parameters
-  subnets = [var.subnets]
+  subnets = var.subnets
 
   ### LC parameters
   lc_id = module.lc.lc_id
