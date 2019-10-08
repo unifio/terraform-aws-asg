@@ -77,7 +77,7 @@ variable "placement_group" {
 }
 
 variable "protect_from_scale_in" {
-  type = string
+  type = bool
 }
 
 variable "suspended_processes" {
