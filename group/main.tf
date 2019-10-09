@@ -1,10 +1,5 @@
 # AWS Auto Scaling Configuration
 
-## Set Terraform version constraint
-terraform {
-  required_version = "> 0.8.0"
-}
-
 ## Creates cloudconfig fragments for tagging
 data "aws_region" "current" {
 }

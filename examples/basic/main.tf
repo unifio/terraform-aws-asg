@@ -43,7 +43,7 @@ module "example" {
   stack_item_label    = var.stack_item_label
 
   # VPC parameters
-  subnets = [split(",", var.subnets)]
+  subnets = split(",", var.subnets)
   vpc_id  = var.vpc_id
 
   # LC parameters
@@ -52,20 +52,20 @@ module "example" {
   enable_monitoring           = var.enable_monitoring
   instance_type               = var.instance_type
   key_name                    = var.key_name
-  security_groups             = [split(",", var.security_groups)]
+  security_groups             = split(",", var.security_groups)
   spot_price                  = var.spot_price
 
   # ASG parameters
   default_cooldown          = var.default_cooldown
   desired_capacity          = var.desired_capacity
-  enabled_metrics           = [split(",", var.enabled_metrics)]
+  enabled_metrics           = split(",", var.enabled_metrics)
   force_delete              = var.force_delete
   hc_grace_period           = var.hc_grace_period
   max_size                  = var.max_size
   min_size                  = var.min_size
   protect_from_scale_in     = var.protect_from_scale_in
-  suspended_processes       = [split(",", var.suspended_processes)]
-  termination_policies      = [split(",", var.termination_policies)]
+  suspended_processes       = split(",", var.suspended_processes)
+  termination_policies      = split(",", var.termination_policies)
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
 }
 

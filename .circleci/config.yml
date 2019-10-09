@@ -5,7 +5,7 @@ common: &common
     - image: unifio/ci:5.0.718-ruby-2.5.5
 
   environment:
-    AWS_REGION: 'us-east-2'
+    AWS_REGION: 'us-east-1'
 
 version: 2
 

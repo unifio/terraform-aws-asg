@@ -165,7 +165,7 @@ module "example" {
   stack_item_label    = var.stack_item_label
 
   # VPC parameters
-  subnets = [split(",", var.subnets)]
+  subnets = split(",", var.subnets)
   vpc_id  = var.vpc_id
 
   # LC parameters

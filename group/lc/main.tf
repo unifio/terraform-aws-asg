@@ -1,4 +1,9 @@
 # AWS Launch Configuration
+locals {
+  associate_public_ip_address = var.associate_public_ip_address == "" ? null : tobool(var.associate_public_ip_address)
+  enable_monitoring = var.enable_monitoring == "" ? null : tobool(var.enable_monitoring)
+  ebs_vol_encrypted = var.ebs_vol_encrypted == "" ? null : tobool(var.ebs_vol_encrypted)
+}
 
 ## Creates security group
 resource "aws_security_group" "sg_asg" {
@@ -21,9 +26,9 @@ resource "aws_security_group" "sg_asg" {
 resource "aws_launch_configuration" "lc" {
   count = length(var.ebs_vol_device_name) > 0 ? 0 : 1
 
-  associate_public_ip_address = var.associate_public_ip_address
+  associate_public_ip_address = local.associate_public_ip_address
   ebs_optimized               = var.ebs_optimized
-  enable_monitoring           = var.enable_monitoring
+  enable_monitoring           = local.enable_monitoring
   iam_instance_profile        = var.instance_profile
   image_id                    = var.ami
   instance_type               = var.instance_type
@@ -51,9 +56,9 @@ resource "aws_launch_configuration" "lc" {
 resource "aws_launch_configuration" "lc_ebs" {
   count = length(var.ebs_vol_device_name) > 0 ? 1 : 0
 
-  associate_public_ip_address = var.associate_public_ip_address
+  associate_public_ip_address = local.associate_public_ip_address
   ebs_optimized               = var.ebs_optimized
-  enable_monitoring           = var.enable_monitoring
+  enable_monitoring           = local.enable_monitoring
   iam_instance_profile        = var.instance_profile
   image_id                    = var.ami
   instance_type               = var.instance_type
@@ -76,7 +81,7 @@ resource "aws_launch_configuration" "lc_ebs" {
   ebs_block_device {
     delete_on_termination = var.ebs_vol_del_on_term
     device_name           = var.ebs_vol_device_name
-    encrypted             = length(var.ebs_vol_snapshot_id) > 0 ? "" : var.ebs_vol_encrypted
+    encrypted             = length(var.ebs_vol_snapshot_id) > 0 ? null : local.ebs_vol_encrypted
     iops                  = var.ebs_vol_type == "io1" ? var.ebs_vol_iops : "0"
     snapshot_id           = var.ebs_vol_snapshot_id
     volume_size           = length(var.ebs_vol_snapshot_id) > 0 ? "0" : var.ebs_vol_size
