@@ -7,9 +7,9 @@ lc-ebs-new::module: 'examples/complete'
 ## State storage
 lc-ebs-new::state:
   - s3:
-      bucket: "%{hiera('tf_state_bucket')}"
+      bucket: "%{alias('tf_state_bucket')}"
       name: "terraform-aws-asg/%{environment}"
-      region: "%{hiera('tf_state_region')}"
+      region: "%{alias('tf_state_region')}"
 
 ## Input variables
 examples::complete::vars:

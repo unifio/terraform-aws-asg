@@ -2,11 +2,10 @@ common: &common
   working_directory: ~/repo
 
   docker:
-    - image: unifio/ci:3.0.551-ruby-2.5.1
+    - image: unifio/ci:5.0.718-ruby-2.5.5
 
   environment:
     AWS_REGION: 'us-east-2'
-    TF_PLUGIN_CACHE_DIR: '/root/.terraform.d/plugin-cache'
 
 version: 2
 

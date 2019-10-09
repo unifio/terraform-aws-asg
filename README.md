@@ -174,7 +174,7 @@ module "asg" {
   instance_based_naming_enabled = true
   instance_type                 = "m4.large"
   key_name                      = "ops"
-  security_groups               = "sg-c1afc0a8,sg-d4f906bd"
+  security_groups               = "sg-c1afc0a8,sg-7e33f32f"
   spot price                    = "0.010"
   user_data                     = "${template_file.user_data.rendered}"
 
