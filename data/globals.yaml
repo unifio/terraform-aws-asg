@@ -2,10 +2,12 @@
 # Global variables
 
 ## Terraform
-tf_state_bucket: 'unifio-terraform-state'
-tf_state_region: 'us-east-2'
+tf_state_bucket: 'unifio-terrraform-state-us-east-1'
+tf_state_region: "us-east-1"
 
 ## VPC
-vpc_id: 'vpc-0f986c66'
-vpc_region: 'us-east-2'
-vpc_subnets: 'subnet-3315e85a,subnet-3bbaaf43,subnet-ec1326a6'
+# aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --profile unifiouat | jq '.Vpcs[] | .VpcId'
+vpc_id: 'vpc-778aca0d'
+vpc_region: 'us-east-1'
+# aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-778aca0d" --profile unifiouat | jq '.Subnets[] | .SubnetId'
+vpc_subnets: 'subnet-9a78bcd7,subnet-547d4d08,subnet-b7e4d0d0'

@@ -7,16 +7,16 @@ lc-ebs-snap::module: 'examples/complete'
 ## State storage
 lc-ebs-snap::state:
   - s3:
-      bucket: "%{hiera('tf_state_bucket')}"
+      bucket: "%{alias('tf_state_bucket')}"
       name: "terraform-aws-asg/%{environment}"
-      region: "%{hiera('tf_state_region')}"
+      region: "%{alias('tf_state_region')}"
 
 ## Input variables
 examples::complete::vars:
   # LC parameters
   ebs_vol_device_name: '/dev/xvdb'
   ## amzn-ami-minimal-hvm-2016.03.3.x86_64
-  ebs_vol_snapshot_id: 'snap-08b95a31adefd036f'
+  ebs_vol_snapshot_id: 'snap-62d9d283'
 
   # ASG parameters
   max_size: '1'

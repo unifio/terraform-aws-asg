@@ -2,108 +2,110 @@
 
 ## Resource tags
 variable "stack_item_fullname" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_label" {
-  type = "string"
+  type = string
 }
 
 ## Allow override of resource naming
 variable "lc_sg_name_prefix_override" {
-  type = "string"
+  type = string
 }
 
 ## VPC parameters
 variable "vpc_id" {
-  type = "string"
+  type = string
 }
 
 ## LC parameters
 variable "associate_public_ip_address" {
-  type = "string"
+  type = string
+  default = "false"
 }
 
 variable "ami" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_optimized" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_del_on_term" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_device_name" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_encrypted" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_snapshot_id" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_iops" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_size" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_vol_type" {
-  type = "string"
+  type = string
 }
 
 variable "enable_monitoring" {
-  type = "string"
+  type = string
 }
 
 variable "instance_profile" {
-  type = "string"
+  type = string
 }
 
 variable "instance_type" {
-  type = "string"
+  type = string
 }
 
 variable "key_name" {
-  type = "string"
+  type = string
 }
 
 variable "placement_tenancy" {
-  type = "string"
+  type = string
 }
 
 variable "root_vol_del_on_term" {
-  type = "string"
+  type = string
 }
 
 variable "root_vol_iops" {
-  type = "string"
+  type = string
 }
 
 variable "root_vol_size" {
-  type = "string"
+  type = string
 }
 
 variable "root_vol_type" {
-  type = "string"
+  type = string
 }
 
 variable "security_groups" {
-  type = "list"
+  type = list(string)
 }
 
 variable "spot_price" {
-  type = "string"
+  type = string
 }
 
 variable "user_data" {
-  type = "string"
+  type = string
 }
+

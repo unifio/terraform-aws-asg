@@ -1,0 +1,338 @@
+#!/usr/bin/env bash
+# Run from the source tree root
+cd `dirname $0`
+cd ../..
+### Environment Variables
+# Variables are used for determining CI settings
+# Variable precedence is as follows with the last taking
+# the highest precedence
+#
+# 1. Default values
+# 2. Exported environment variables
+# 3. .env.covalence loaded values
+# 4. bin/covalence argument switches
+#
+# source local .env.covalence file if present
+LOCAL_ENVFILE=${LOCAL_ENVFILE:-".env.covalence"}
+
+# If set to true will no use old docker-wrapper behavior
+# omitting the `rake` command
+DOCKER_WRAPPER=${DOCKER_WRAPPER:-}
+# The docker environment variable file passed to the container
+# Can contain multiple envfiles separated by : env1:env2:env3
+LOAD_ENVFILE=${LOAD_ENVFILE:-".env.docker:.env.secrets"}
+# AWS Credentials path to mount (defaults to data/secure/.aws)
+AWS_CREDENTIAL_PATH=${AWS_CREDENTIAL_PATH:-"$HOME/.aws"}
+# The Container home directory
+DOCKER_HOMEDIR=${DOCKER_HOMEDIR:-"/root"}
+# The docker DNS can be updated to AWS DNS
+DOCKER_DNS=${DOCKER_DNS:-}
+# If you want docker to run as specific user
+CONTAINER_USER_ID=${CONTAINER_USER_ID:-}
+# Alternative Covalence Rakefile can be specified
+# will add `-f Rakefile``
+COVALENCE_RAKEFILE=${COVALENCE_RAKEFILE:-}
+# Alternative Covalence configuration can be specified
+COVALENCE_CONFIG=${COVALENCE_CONFIG:-"covalence.yaml"}
+# Environments to be included in CI
+COVALENCE_TEST_ENVS=${COVALENCE_TEST_ENVS:-}
+# The Container image to use for the ci defaults to unifio/ci latest
+DOCKER_IMAGE_NAME=${DOCKER_IMAGE_NAME:-"unifio/ci"}
+# Enable debugging of script
+S_DEBUG=${S_DEBUG:-}
+# Dump verbose information about commands without executing them.
+DUMP_ENV=${DUMP_ENV:-}
+# Causes covalence rake -T
+LIST_RAKE_TASKS=${LIST_RAKE_TASKS:-}
+# Adds volume to docker container HOST_MNT:CONTAINER_MNT
+ADD_VOLUMES=${ADD_VOLUMES:-}
+# Can be used to change docker run behavior ie -it vs --rm
+DOCKER_RUN_TYPE=${DOCKER_RUN_TYPE:-"--rm"}
+# TEST_HOST_LOCAL is used for specifying a domain to overload
+# and point to the Docker host IP in the container /etc/host file
+# --add-host  CONSUL_TEST_IP will be set automatically
+TEST_HOST_LOCAL=${TEST_HOST_LOCAL:-}
+CONSUL_TEST_IP=${CONSUL_TEST_IP:-}
+# Allows specifying --entrypoint= command
+ENTRYPOINT=${ENTRYPOINT:-}
+# Interactive Shell enabled
+INTSHELL=${INTSHELL:-}
+# Sets the Docker workspace to mount and set as working directory -w
+DOCKER_WORKSPACE=${DOCKER_WORKSPACE:-"/workspace"}
+# The project root directory to mount in docker workspace
+SRC_ROOT=${SRC_ROOT:-"$(pwd)"}
+# Atlas and AWS tokens if needed but defaults to .aws
+# For possible future use currently should be set in .env.docker
+#ATLAS_TOKEN=${AWS_SECRET_ACCESS_KEY:-}
+#AWS_ACCESS_KEY_ID=${AWS_SECRET_ACCESS_KEY:-}
+#AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+
+# Create initial Docker Base Command
+DOCKER_BASE_COMMANDS[0]="docker run"
+ARGS=()
+# Check for debug statements
+if [[ $S_DEBUG ]]; then
+  set -x
+fi
+
+# Checks if ARGS already contains the given value
+has_arg() {
+  local element
+  for element in "${@:2}"; do
+      [ "${element}" == "${1}" ] && return 0
+  done
+  return 1
+}
+# Adds the given argument if not specified
+add_arg() {
+  local arg="${1}"
+  [ $# -ge 1 ] && local val="${2}"
+  if ! has_arg "${arg}" "${DOCKER_BASE_COMMANDS[@]}"; then
+    ARGS+=("${arg}")
+    [ $# -ge 1 ] && ARGS+=("${val}")
+  fi
+}
+# Adds the given argument duplicates ok.
+add_arg_simple() {
+  local arg="${1}"
+  [ $# -ge 1 ] && local val="${2}"
+  ARGS+=("${arg}")
+  [ $# -ge 1 ] && ARGS+=("${val}")
+}
+# get the docker host ip address. and add it to container /etc/host
+# for TEST_HOST_LOCAL URL provided.
+get_docker_host(){
+  if [[ $TEST_HOST_LOCAL ]]; then
+    GET_DOCKER_HOST_IP=$(docker inspect --format '{{ .NetworkSettings.Gateway }}' $(docker ps -q | grep -m 1 "") 2>/dev/null)
+    if [[ ${GET_DOCKER_HOST_IP} ]];then
+      CONSUL_TEST_IP=${GET_DOCKER_HOST_IP}
+      add_arg_simple "--add-host" "${TEST_HOST_LOCAL}:${CONSUL_TEST_IP}"
+    fi
+  fi
+}
+# add a volume host:docker mount.
+add_host_volume(){
+  local host_vol="${1%:*}"
+  local dkr_vol="${1##*:}"
+  add_arg "-v" "${host_vol}:${dkr_vol}"
+}
+
+# add envfiles for docker if they exist in working directory
+add_docker_envfiles(){
+  local envfiles="${1}"
+  IFS=':' read -r -a arrenvs <<< "$envfiles"
+  for i in "${arrenvs[@]}"
+  do
+    if [[ -r "${i}" ]];then
+      add_arg "--env-file" "$(pwd)/${i}"
+    fi
+  done
+}
+usage () {
+  echo ""
+  echo "Usage : $0 [OPTIONS] [COMMANDS|task]"
+  echo "Options:"
+  echo "  -l                  List available rake tasks           "
+  echo "  -e  FILE:FILE       Envfiles for docker : separated     "
+  echo "  -s  FILE            Local env file to source            "
+  echo "  -d  DNS             Docker DNS                          "
+  echo "  -u  USER            Run Docker as user                  "
+  echo "  -O                  Use Wrapper without Covalence       "
+  echo "  -T  URL             URL for Consul overload             "
+  echo "  -R                  Leave intermediary containers       "
+  echo "  -v  VOL:MNT         Add a volume mount to container     "
+  echo "  -c  AWS_DIR         AWS credentials path                "
+  echo "  -w  DIR             Host workspace to mount             "
+  echo "  -E  ENTRYPOINT      Override entrypoint command         "
+  echo "  -i  DKR_IMG_NAME    Docker container Image name         "
+  echo "  -h                  View help.                          "
+  echo "  -r  RAKEFILE        Specify separate rakefile           "
+  echo "  -D                  Turn on debug                       "
+  echo "  -H                  Environment dump                    "
+}
+# require at lest a task or -l to run
+if [ $# -lt 1 ]; then
+  usage
+  exit 1
+fi
+
+# Load local env file if provided/available
+# That way explicit options will overwrite
+# any env vars sourced in .env.covalence
+if [[ -r "${LOCAL_ENVFILE}" ]]; then
+  . ./"${LOCAL_ENVFILE}"
+fi
+
+# Parse arguments and populate ENV vars respectively
+# See Environment Variable section or .env.covalence for
+# option details.
+while getopts ":le:s:d:OIT:Rv:c:w:E:i:hr:DH" opt; do
+  case $opt in
+    l)
+      LIST_RAKE_TASKS=1
+      ;;
+    e)
+      LOAD_ENVFILE="$OPTARG"
+      ;;
+    s)
+      LOCAL_ENVFILE="$OPTARG"
+      ;;
+    d)
+      DOCKER_DNS="$OPTARG"
+      ;;
+    u)
+      CONTAINER_USER_ID="$OPTARG"
+      ;;
+    O)
+      DOCKER_WRAPPER=1
+      ;;
+    T)
+      TEST_HOST_LOCAL="$OPTARG"
+      ;;
+    R)
+      DOCKER_RUN_TYPE="--it"
+      ;;
+    v)
+      ADD_VOLUMES="$OPTARG"
+      ;;
+    c)
+      AWS_CREDENTIAL_PATH="$OPTARG"
+      ;;
+    w)
+      DOCKER_WORKSPACE="$OPTARG"
+      ;;
+    E)
+      ENTRYPOINT="$OPTARG"
+      ;;
+    i)
+      DOCKER_IMAGE_NAME="$OPTARG"
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    D)
+      S_DEBUG=1
+      ;;
+    H)
+      DUMP_ENV=1
+      ;;
+    I)
+      INTSHELL=1
+      ;;
+    r)
+      COVALENCE_RAKEFILE="$OPTARG"
+      ;;
+    \?)
+      set +x
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit 1
+      ;;
+    :)
+      set +x
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+# Get rid of processed options from Array
+shift "$((OPTIND-1))"
+USER_ARGS=("${@}")
+
+if [[ "${COVALENCE_CONFIG}" ]]; then
+  add_arg_simple "-e" "COVALENCE_CONFIG=${COVALENCE_CONFIG}"
+fi
+
+if [[ "${COVALENCE_TEST_ENVS}" ]]; then
+  add_arg_simple "-e" "COVALENCE_TEST_ENVS=${COVALENCE_TEST_ENVS}"
+fi
+
+# Add the --rm or --it argument to the docker command array.
+if [[ "${DOCKER_RUN_TYPE}" ]]; then
+  DOCKER_BASE_COMMANDS[3]="${DOCKER_RUN_TYPE}"
+fi
+
+if [[ "${DOCKER_DNS}" ]]; then
+  add_arg "--dns" "${DOCKER_DNS}"
+fi
+
+if [[ "${CONTAINER_USER_ID}" ]]; then
+  DOCKER_HOMEDIR=""
+  add_arg_simple "-e" "AWS_CONFIG_FILE=${DOCKER_HOMEDIR}/.aws/config"
+  add_arg_simple "-e" "AWS_SHARED_CREDENTIALS_FILE=${DOCKER_HOMEDIR}/.aws/credentials"
+  add_arg_simple "-e" "USER=user"
+  add_arg_simple "-e" "LOCAL_USER_ID=${CONTAINER_USER_ID}"
+else
+  add_arg_simple "-e" "USER=root"
+fi
+
+get_docker_host "$TEST_HOST_LOCAL"
+
+if [[ "$ADD_VOLUMES" ]];then
+  add_host_volume "${ADD_VOLUMES}"
+fi
+
+if [[ -d "$AWS_CREDENTIAL_PATH" ]];then
+  add_arg_simple "-v" "${AWS_CREDENTIAL_PATH}:${DOCKER_HOMEDIR}/.aws"
+fi
+
+if [[ -d "${SRC_ROOT}" ]];then
+  add_arg_simple "-v" "${SRC_ROOT}:${DOCKER_WORKSPACE}"
+  add_arg "-w" "${DOCKER_WORKSPACE}"
+fi
+
+if [[ "${LOAD_ENVFILE}" ]]; then
+  add_docker_envfiles "${LOAD_ENVFILE}"
+fi
+
+if [[ "${ENTRYPOINT}" ]]; then
+  ARGS+=("--entrypoint=${ENTRYPOINT}")
+fi
+if [[ $INTSHELL && ! $ENTRYPOINT ]]; then
+  ARGS+=("--entrypoint=/bin/sh")
+fi
+# All options should be completed
+# Only image and task remain.
+
+if [[ $DOCKER_IMAGE_NAME ]];then
+  if [[ $INTSHELL && $DOCKER_WRAPPER ]]; then
+    ARGS+=("-it")
+  fi
+  ARGS+=("$DOCKER_IMAGE_NAME")
+fi
+
+#Check whether docker wrapper or covalence
+if [[ ! $DOCKER_WRAPPER ]]; then
+  ARGS+=("bundle exec rake")
+fi
+
+if [[ -r "${COVALENCE_RAKEFILE}" && ! $DOCKER_WRAPPER ]];then
+  add_arg "-f" "${COVALENCE_RAKEFILE}"
+fi
+
+if [[ $LIST_RAKE_TASKS && ! $DOCKER_WRAPPER ]];then
+  ARGS+=("-T")
+fi
+# Merged Commands for execution
+DOCKER_BASE_COMMANDS=(${DOCKER_BASE_COMMANDS[@]} ${ARGS[@]} ${USER_ARGS[@]})
+
+if [[ $DUMP_ENV ]]; then
+  echo "DOCKER_BASE_COMMANDS that would have been executed without -H"
+  echo "${DOCKER_BASE_COMMANDS[@]}"
+  # echo "ARGS array"
+  # echo "${ARGS[@]}"
+  # echo "USER_ARGS array"
+  # echo "${USER_ARGS[@]}"
+  # echo ""
+else
+  # Execute the commands
+  # If we are listing, remove the rake as user won't pass that in.
+  if [[ $LIST_RAKE_TASKS && ! $DOCKER_WRAPPER ]];then
+    "${DOCKER_BASE_COMMANDS[@]}" | sed -e "s/^rake //"
+  else
+    "${DOCKER_BASE_COMMANDS[@]}"
+  fi
+fi

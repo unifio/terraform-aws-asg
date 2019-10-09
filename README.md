@@ -169,12 +169,12 @@ module "asg" {
   vpc_id  = "vpc-0f986c66"
 
   # LC parameters
-  ami                           = "ami-c55673a0"
+  ami                           = "ami-0b33d91d"
   enable_monitoring             = true
   instance_based_naming_enabled = true
   instance_type                 = "m4.large"
   key_name                      = "ops"
-  security_groups               = "sg-c1afc0a8,sg-d4f906bd"
+  security_groups               = "sg-c1afc0a8,sg-7e33f32f"
   spot price                    = "0.010"
   user_data                     = "${template_file.user_data.rendered}"
 
@@ -210,11 +210,11 @@ module "asg" {
   vpc_id  = "vpc-0f986c66"
 
   # LC parameters
-  ami                           = "ami-c55673a0"
+  ami                           = "ami-0b33d91d"
   ebs_vol_device_name           = "/dev/xvdb"
   ebs_vol_encrypted             = true
   ebs_vol_size                  = 2
-  ebs_vol_snapshot_id           = "snap-08b95a31adefd036f"
+  ebs_vol_snapshot_id           = "snap-62d9d283"
   enable_monitoring             = true
   instance_based_naming_enabled = true
   instance_name_prefix          = "supercool"
