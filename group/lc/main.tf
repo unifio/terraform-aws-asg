@@ -22,6 +22,7 @@ resource "aws_launch_configuration" "lc" {
   count = length(var.ebs_vol_device_name) > 0 ? 0 : 1
 
   associate_public_ip_address = var.associate_public_ip_address
+  ebs_optimized               = var.ebs_optimized
   enable_monitoring           = var.enable_monitoring
   iam_instance_profile        = var.instance_profile
   image_id                    = var.ami
@@ -41,6 +42,10 @@ resource "aws_launch_configuration" "lc" {
     volume_size           = length(var.root_vol_size) > 0 ? var.root_vol_size : "8"
     volume_type           = var.root_vol_type
     encrypted             = var.root_vol_encrypted
+  }
+
+  lifecycle {
+    ignore_changes = ["ebs_block_device"]
   }
 
   lifecycle {
