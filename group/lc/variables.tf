@@ -96,6 +96,11 @@ variable "root_vol_type" {
   type = string
 }
 
+variable "root_vol_encrypted" {
+  type = bool
+  default = false
+}
+
 variable "security_groups" {
   type = list(string)
 }

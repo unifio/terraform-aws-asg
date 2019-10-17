@@ -182,6 +182,11 @@ variable "root_vol_type" {
   default     = "gp2"
 }
 
+variable "root_vol_encrypted" {
+  type = bool
+  default = false
+}
+
 variable "security_groups" {
   type        = list(string)
   description = "A list of associated security group IDs"

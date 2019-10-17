@@ -79,6 +79,7 @@ module "lc" {
   root_vol_iops               = var.root_vol_iops
   root_vol_size               = var.root_vol_size
   root_vol_type               = var.root_vol_type
+  root_vol_encrypted          = var.root_vol_encrypted
   security_groups             = var.security_groups
   spot_price                  = var.spot_price
   user_data                   = data.template_cloudinit_config.cloud_config.rendered

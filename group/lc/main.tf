@@ -41,6 +41,7 @@ resource "aws_launch_configuration" "lc" {
     iops                  = var.root_vol_type == "io1" ? var.root_vol_iops : "0"
     volume_size           = length(var.root_vol_size) > 0 ? var.root_vol_size : "8"
     volume_type           = var.root_vol_type
+    encrypted             = var.root_vol_encrypted
   }
 
   lifecycle {
