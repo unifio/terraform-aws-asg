@@ -44,6 +44,8 @@ resource "aws_launch_configuration" "lc" {
     encrypted             = var.root_vol_encrypted
   }
 
+  ebs_block_device {}
+
   lifecycle {
     create_before_destroy = true
   }
