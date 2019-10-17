@@ -87,6 +87,7 @@ resource "aws_launch_configuration" "lc_ebs" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes        = ["ebs_block_device"]
   }
 }
 
